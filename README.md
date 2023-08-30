@@ -1,4 +1,4 @@
-# Laman Number Library and Nauty Plugin for Maximum Laman Number
+#Maximum Laman Number
 The Laman number library `liblnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm that computes Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasseger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/).
 
 The `nauty` plugin is a fork of the [Nauty-Laman plugin](https://github.com/martinkjlarsson/nauty-laman-plugin) originally written by Martin Larrson for the utility 
