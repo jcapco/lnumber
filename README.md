@@ -89,3 +89,8 @@ ippo         |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs   |   *Not measured*  
 qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs    |   *Not measured*  | *Not measured*  |
 qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs    |   *Not measured*  | *Not measured*  |
 
+
+## Citing
+ 
+[![DOI](https://zenodo.org/badge/683425893.svg)](https://zenodo.org/badge/latestdoi/683425893)
+
