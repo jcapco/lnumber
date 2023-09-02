@@ -66,8 +66,8 @@ The pebble game algorithm (see [Lee and Streinu (2008) Pebble game algorithms an
 The tables below show the execution time when generating graphs while computing the maximum laman number. The setup used are
 * laptop: Windows 10 Pro, 4-core Intel® Core™ i5-8350U CPU @1.70GHz, 16GiB 
 * ippo: Debian GNU/Linux 11, 4-core Intel® Core™ i7-2600 CPU @3.40GHz, 16GiB 
-* qft1: Debian GNU/Linux 11, 32-CPU, 8-core Intel Xeon® CPU E5-2670 @2.6GHz, 386GiB 
-* qft10: Debian GNU/Linux 11, 32-CPU, AMD EPYC 7262 8-core, 2.9GHz, 2036GiB 
+* qft1: Debian GNU/Linux 11, total 16-core, 8-core Intel Xeon® CPU E5-2670 @2.6GHz, 386GiB 
+* qft10: Debian GNU/Linux 11, total 16-core, AMD EPYC 7262 8-core, 2.9GHz, 2036GiB 
 
 ### Laman graphs with maximum Laman numbers
 OEIS entry for number of Laman Graphs: [A227117](https://oeis.org/A227117 "Number of minimally rigid graphs in 2D on n vertices.")<br>
@@ -81,12 +81,13 @@ Command: `geng $n -K2 -u -M`
 n             |     9    |   10    |    11      |    12      |      13       |     14         |
 --------------|:--------:|:-------:|:----------:|:----------:|:-------------:|:--------------:|
 Laman graphs  | 7 222    | 110 132 |  2 039 273 | 44 176 717 | 1 092 493 042 | 30 322 994 747 |
-Max. Laman No.| 344      | 880     | 2 288      | 6 180      | 15 536        | *Not measured* |
-laptop    |   0.9 s  | 28 s    | 25.4 min   | *Not measured*| *Not measured*  | *Not measured*  |
-ippo      |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs      |   *Not measured*  | *Not measured*  |
-qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |   *Not measured*  | *Not measured*  |
-qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs       |  1.84 days  | *Not measured*  |
+Max. Laman No.| 344      | 880     | 2 288      | 6 180      | 15 536        | \* |
+laptop    |   0.9 s  | 28 s    | 25.4 min   | \*| \*  | \*  |
+ippo      |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs      |   \*  | \*  |
+qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |  2.72 days  | \* |
+qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs       |  1.84 days  | \*  |
 
+\* Note Measured
 
 ## Citing
  
