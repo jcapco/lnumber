@@ -1,5 +1,5 @@
 # Maximum Laman Number
-The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm that computes Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasseger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/).
+The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm, original executable implemented by Cristoph Koutschan, that computes the Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasseger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/). 
 
 The `nauty` plugin is a fork of the [Nauty-Laman plugin](https://github.com/martinkjlarsson/nauty-laman-plugin) originally written by Martin Larrson for the utility 
 program `geng` provided by [Nauty](http://pallini.di.uniroma1.it/). The plugin counts the number of non-isomorphic Laman graphs of a given number of 
@@ -88,6 +88,13 @@ qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |  2.72 days  | \* |
 qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs       |  1.84 days  | \*  |
 
 \* Note Measured
+
+## Acknowledgement
+
+Many thanks to my co-authors in the first paper proposing the algorithm and other people who motivated me to do this:
+Matteo Gallet, Georg Grasseger, Cristoph Koutschan, Jan Legersky, Niels Lubbes and Josef Schicho.
+
+I would also like to thank [RISC](https://risc.jku.at/) for allowing me to use their computers for some of my benchmarks.
 
 ## Citing
  
