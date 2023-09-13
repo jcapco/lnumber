@@ -1,5 +1,5 @@
 # Maximum Laman Number
-The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm, original executable implemented by Christoph Koutschan, that computes the Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasseger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/). 
+The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm, original executable implemented by Christoph Koutschan, that computes the Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasegger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/). 
 
 The `nauty` plugin is a fork of the [Nauty-Laman plugin](https://github.com/martinkjlarsson/nauty-laman-plugin) originally written by Martin Larrson for the utility 
 program `geng` provided by [Nauty](http://pallini.di.uniroma1.it/). The plugin counts the number of non-isomorphic Laman graphs of a given number of 
@@ -57,7 +57,7 @@ Both `-K` and `-L` accept rational numbers making it possible to generate, e.g.,
 After forking the plugin, I added the following parameter:
 * `-M`: computes the Laman number while each (nonisomorphic) Laman graph is generated (`-K2` must be given) and keeps the graph with maximum Laman number. The output will parse the maximum Laman number for the given number of vertices. Computation is done in parallel using openmp.
 
-**Note:** The `geng` pluhin will parse the *cpu clock* and the *wall clock*. Since we are computing in parallel, we use the *wall clock* (`omp_get_wtime`) in the benchmarks below.
+**Note:** The `geng` plugin will parse the *cpu clock* and the *wall clock*. Since we are computing in parallel, we use the *wall clock* (`omp_get_wtime`) in the benchmarks below.
 
 ## Algorithm
 The pebble game algorithm (see [Lee and Streinu (2008) Pebble game algorithms and sparse graphs](https://www.sciencedirect.com/science/article/pii/S0012365X07005602)) is used to generated the Laman graphs. While generating the graphs our algorithm (see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/)), implemented in the `liblnumber` library, is used in parallel to compute the Laman numbers. 
@@ -68,10 +68,11 @@ The tables below show the execution time when generating graphs while computing 
 * ippo: Debian GNU/Linux 11, 4-core Intel® Core™ i7-2600 CPU @3.40GHz, 16GiB 
 * qft1: Debian GNU/Linux 11, total 16-core, 8-core Intel Xeon® CPU E5-2670 @2.6GHz, 386GiB 
 * qft10: Debian GNU/Linux 11, total 16-core, AMD EPYC 7262 8-core, 2.9GHz, 2036GiB 
+* leo5-64: [LEO5](https://www.uibk.ac.at/zid/systeme/hpc-systeme/leo5/) UIBK supercomputer, allocating one entire node with 64-cores.
 
 ### Laman graphs with maximum Laman numbers
 OEIS entry for number of Laman Graphs: [A227117](https://oeis.org/A227117 "Number of minimally rigid graphs in 2D on n vertices.")<br>
-OEIS entry for Laman numbers: [A306420](https://oeis.org/A306420)
+OEIS entry for maximum Laman numbers: [A306420](https://oeis.org/A306420)
 
 Command: `geng $n -K2 -u -M`
 
@@ -86,13 +87,14 @@ laptop    |   0.9 s  | 28 s    | 25.4 min   | \*| \*  | \*  |
 ippo      |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs      |   \*  | \*  |
 qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |  2.72 days  | \* |
 qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs       |  1.84 days  | \*  |
+leo5-64  | \*       | \*      | \*         | 19 min        |   16.78 hrs  | \*  |
 
 \* Not Measured
 
 ## Acknowledgement
 
 Many thanks to my co-authors in the first paper proposing the algorithm and other people who motivated me to do this:
-Matteo Gallet, Georg Grasseger, Christoph Koutschan, Jan Legersky, Niels Lubbes and Josef Schicho.
+Matteo Gallet, Georg Grasegger, Christoph Koutschan, Jan Legersky, Niels Lubbes and Josef Schicho.
 
 I would also like to thank [RISC](https://risc.jku.at/) for allowing me to use their computers for some of my benchmarks.
 
