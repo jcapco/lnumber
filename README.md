@@ -68,7 +68,8 @@ The tables below show the execution time when generating graphs while computing 
 * ippo: Debian GNU/Linux 11, 4-core Intel® Core™ i7-2600 CPU @3.40GHz, 16GiB 
 * qft1: Debian GNU/Linux 11, total 16-core, 8-core Intel Xeon® CPU E5-2670 @2.6GHz, 386GiB 
 * qft10: Debian GNU/Linux 11, total 16-core, AMD EPYC 7262 8-core, 2.9GHz, 2036GiB 
-* leo5-64: [LEO5](https://www.uibk.ac.at/zid/systeme/hpc-systeme/leo5/) UIBK supercomputer, allocating one entire node with 64-cores.
+* leo5-64: [LEO5](https://www.uibk.ac.at/zid/systeme/hpc-systeme/leo5/) UIBK supercomputer, allocating one node with 64-cores.
+* leo5-64x4: [LEO5](https://www.uibk.ac.at/zid/systeme/hpc-systeme/leo5/) UIBK supercomputer, 4 processes, each process in 1 node with 64-cores.
 
 ### Laman graphs with maximum Laman numbers
 OEIS entry for number of Laman Graphs: [A227117](https://oeis.org/A227117 "Number of minimally rigid graphs in 2D on n vertices.")<br>
@@ -76,7 +77,7 @@ OEIS entry for maximum Laman numbers: [A306420](https://oeis.org/A306420)
 
 Command: `geng $n -K2 -u -M`
 
-[Laman graphs](https://en.wikipedia.org/wiki/Laman_graph), minimally rigid graphs in 2D, are exactly the (2,3)-tight graphs. When increasing n by one, for large n, the number of graphs increases by a factor of approximately 30 while the execution time increases by a factor of approximately 60. `geng` parallelizes well over physical cores but poorly over logical cores. 
+[Laman graphs](https://en.wikipedia.org/wiki/Laman_graph) are exactly the (2,3)-tight graphs. When increasing n by one, for large n, the number of graphs increases by a factor of approximately 30 while the execution time (for both computing Laman numbers and generating the graphs) increases by a factor of approximately 60. `geng` parallelizes well over physical cores but poorly over logical cores. When computing Laman numbers and employing [embarassingly parallel](https://en.wikipedia.org/wiki/Embarrassingly_parallel) methods with 4x multiprocessing with the same total number of cores, the execution time increases by a factor of approximately 1.2.
 
 
 n             |     9    |   10    |    11      |    12      |      13       |     14         |
@@ -87,7 +88,8 @@ laptop    |   0.9 s  | 28 s    | 25.4 min   | \*| \*  | \*  |
 ippo      |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs      |   \*  | \*  |
 qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |  2.72 days  | \* |
 qft10     |   0.07s  | 1.7 s   | 1 min      | 0.8 hrs       |  1.84 days  | \*  |
-leo5-64  | \*       | \*      | \*         | 19 min        |   16.78 hrs  | \*  |
+leo5-64   | \*       | \*      | \*         | 19 min        |   16.78 hrs  | \*  |
+leo5-64x4 | \*  | \*  | \*  | 5.63 min  | \*  | \* |
 
 \* Not Measured
 
