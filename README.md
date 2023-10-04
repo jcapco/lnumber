@@ -55,7 +55,7 @@ The plugin was originally developed by Martin Larrson who added the following pa
 Both `-K` and `-L` accept rational numbers making it possible to generate, e.g., (3/2,2)-tight graphs (see results below). Note, however, that denominators equal to their numerator are ignored, e.g., `-K2/2` is equivalent to `-K2`. If rational arguments are not needed, define the macro `INT_KL` before compiling for a small increase in performance.
 
 After forking the plugin, I added the following parameter:
-* `-M`: computes the Laman number while each (nonisomorphic) Laman graph is generated (`-K2` must be given) and keeps the graph with maximum Laman number. The output will parse the maximum Laman number for the given number of vertices. Computation is done in parallel using openmp.
+* `-Mm:n`: computes the Laman number while each (nonisomorphic) Laman graph is generated (`-K2` must be given) and keeps the graph with maximum Laman number. The output will parse the maximum Laman number for the given number of vertices. Computation is done in parallel using openmp. If n is 0 then it will compute the maximum of all the Laman graphs it generates. If n>0, then it computes the maximum of every n+m graph it generates. This is useful when computing the maximum Laman number with multiple processes. One runs `-Mm:n` in n different processes with m=0,1,..., n-1. The maximum Laman number is the maximum of all the numbers from the output of these n processes.
 
 **Note:** The `geng` plugin will parse the *cpu clock* and the *wall clock*. Since we are computing in parallel, we use the *wall clock* (`omp_get_wtime`) in the benchmarks below.
 
@@ -75,12 +75,12 @@ The tables below show the execution time when generating graphs while computing 
 OEIS entry for number of Laman Graphs: [A227117](https://oeis.org/A227117 "Number of minimally rigid graphs in 2D on n vertices.")<br>
 OEIS entry for maximum Laman numbers: [A306420](https://oeis.org/A306420)
 
-Command: `geng $n -K2 -u -M`
+Command: `geng $v -K2 -u -M$m:$n`
 
 [Laman graphs](https://en.wikipedia.org/wiki/Laman_graph) are exactly the (2,3)-tight graphs. When increasing n by one, for large n, the number of graphs increases by a factor of approximately 30 while the execution time (for both computing Laman numbers and generating the graphs) increases by a factor of approximately 60. `geng` parallelizes well over physical cores but poorly over logical cores. When computing Laman numbers and employing [embarassingly parallel](https://en.wikipedia.org/wiki/Embarrassingly_parallel) methods with 4x multiprocessing with the same total number of cores, the execution time increases by a factor of approximately 1.2.
 
 
-n             |     9    |   10    |    11      |    12      |      13       |     14         |
+v             |     9    |   10    |    11      |    12      |      13       |     14         |
 --------------|:--------:|:-------:|:----------:|:----------:|:-------------:|:--------------:|
 Laman graphs  | 7 222    | 110 132 |  2 039 273 | 44 176 717 | 1 092 493 042 | 30 322 994 747 |
 Max. Laman No.| 344      | 880     | 2 288      | 6 180      | 15 536        | 42 780 |

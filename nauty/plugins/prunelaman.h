@@ -8,10 +8,14 @@
 /* Using rationals for (k,l) comes with a small overhead. Define this macro to use integers for (k,l). */
 // #define INT_KL
 
-const size_t g_collect_no = 300;
-double g_start_time = 0;
-mpz_class g_graphs[g_collect_no];
-size_t g_iter = 0;
+static const size_t g_collect_no = 300;
+static double g_start_time = 0;
+static mpz_class g_graphs[g_collect_no];
+static mpz_class g_max_graph = 0; 
+static size_t g_iter = 0;
+static long g_mod_iter = 0;
+static long g_mod = 0;
+static long g_modN = 0;
 
 #define NTH_NODE(n) (bit[n]) /* Apparently lookup is faster than bitshift. */
 
@@ -51,8 +55,9 @@ static const int MultiplyDeBruijnBitPosition[32] =
 #else
 #define TOO_MANY_EDGES(n, m) (tightkd * tightld * (m) > tightkn * tightld * (n)-tightln * tightkd)
 #define PLUGIN_SWITCHES else SWRANGE('K', "/", gotK, tightkn, tightkd, "geng -K") else SWRANGE('L', "/", gotL, tightln, tightld, "geng -L") \
-  else SWBOOLEAN('H', henneberg1) else  SWBOOLEAN('M', max_lnumber_flag) else SWINT('N', gotN, minn, "geng -N") 
+  else SWBOOLEAN('H', henneberg1) else  SWRANGE('M',":", max_lnumber_flag, g_mod, g_modN, "geng -M") else SWINT('N', gotN, minn, "geng -N") 
 #endif
+//SWBOOLEAN('M', max_lnumber_flag) else SWINT('N', gotN, minn, "geng -N")
 
 /* Note: PLUGIN_INIT happens after validation of the input arguments in geng.c.
  * Beware of illegal argument combinations. */
@@ -132,12 +137,7 @@ static const int MultiplyDeBruijnBitPosition[32] =
           tightkn, tightkd, tightln, tightld, minn);                                \
       else                                                                                  \
         fprintf(stderr, ">A Laman plugin -K%ldL%ldN%d\n", tightkn, tightln, minn);        \
-    }                                                                                         \
-    if (max_lnumber_flag) \
-    { \
-      max_lnumber=0; \
-      max_ln_graph=0; \
-    } \
+    }\
   }
 
 static int (*prune)(graph *, int, int);
@@ -151,9 +151,10 @@ static long tightld = 1;
 static int minn = 2;
 static boolean henneberg1 = FALSE;
 static nauty_counter total_number_of_graphs = 0;
-static boolean max_lnumber_flag = FALSE;
+
 static size_t max_lnumber=0;
-static size_t max_ln_graph=0;
+static boolean max_lnumber_flag = FALSE;
+
 
 inline void convert_to_mpz(graph* g ,mpz_ptr nptr,int n)
 {
@@ -199,8 +200,12 @@ void update_max_lnumber(FILE *f, graph *g, int n)
 { 
   if (max_lnumber_flag)
   { 
+    if (g_modN>0)
+    {
+      g_mod_iter = (g_mod_iter+1)%g_modN;
+      if (g_mod_iter != g_mod) return;
+    }
     if (n>5 && is_degree_two(g,n)) return;
-    //jcapco todo, do not always create gmpz.. iterator..
     mpz_class& npz = g_graphs[g_iter];
     npz = 0;
     convert_to_mpz(g,npz.get_mpz_t(),n);
@@ -214,7 +219,11 @@ void update_max_lnumber(FILE *f, graph *g, int n)
         temp = laman_numbern(g_graphs[i].get_mpz_t(), maxn);      
 #pragma omp critical
         {
-          if (temp>max_lnumber) max_lnumber = temp;
+          if (temp>max_lnumber) 
+          {
+            g_max_graph = g_graphs[i];
+            max_lnumber = temp;
+          }
         }
       }
       g_iter = 0;
@@ -224,25 +233,34 @@ void update_max_lnumber(FILE *f, graph *g, int n)
 
 void max_lnumber_report(nauty_counter nout, double cpu)
 {
+  
   if (max_lnumber_flag)
   {
     //jcapco todo: complete what's remaining //private(temp)
-    size_t temp = 0;
+    size_t temp = 0; 
+
 #pragma omp parallel for 
     for (int i=0; i<g_iter;++i)
     {
       temp = laman_numbern(g_graphs[i].get_mpz_t(), maxn);      
 #pragma omp critical
       {
-        if (temp>max_lnumber) max_lnumber = temp;
+        if (temp>max_lnumber) 
+        {
+          max_lnumber = temp;
+          g_max_graph = g_graphs[i];
+        }
       }
     }
-    fprintf(stderr, ">Z Laman graph %ld\n", max_ln_graph);
-    fprintf(stderr, "> with maximum Laman number %ld\n", max_lnumber);
-    fprintf(stderr, "> wall clock elapsed: %f\n", omp_get_wtime()-g_start_time);
+
+    if (g_modN > 0)
+      fprintf(stderr, ">Z %ld mod %ld\n", g_mod,g_modN);
+    fprintf(stderr, ">Z with maximum Laman number %ld\n", max_lnumber);
+    fprintf(stderr, ">Z Max. Laman number Laman graph ");
+    mpz_out_str(stderr,10,g_max_graph.get_mpz_t());
+    fprintf(stderr, "\n>Z wall clock elapsed: %f\n", omp_get_wtime()-g_start_time);
     fflush(stderr);
   }
-  //jcapco todo, outputing the laman graph
 }
 
 /* Generates the next combination of k items from n possible ones, i.e., the
