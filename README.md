@@ -70,7 +70,7 @@ in C++ with the flag `-D'PLUGIN="<path to this repo>/prunelaman.h"'` and linked 
 
 We use either `lnumber n` or `lnumber -s n`, where `n` is a positive integer encoding the Laman graph
 * `-s`: use this option if you want to compute the number of spherical realizations of the given Laman graph `n`, otherwise the program computes the number of planar realizations
-* `-n`:  the upper half triangle (without diagonal) of the adjancy matrix of the laman graph is a sequence (reading the matrix in row-major order) of bits which
+* `n`:  the upper half triangle (without diagonal) of the adjancy matrix of the laman graph is a sequence (reading the matrix in row-major order) of bits which
 is a binary number converted to a positive decimal integer n.
 
 *Example:*
