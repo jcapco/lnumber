@@ -7,10 +7,10 @@
 using namespace std;
 
 // Connected components of a graph
-vector<vector<int>> components (vector<vector<int>>& e, vector<int> v)
+vector<vector<int> > components (vector<vector<int> >& e, vector<int> v)
 {
   int i, j, p, a;
-  vector<vector<int>> cmps(0);
+  vector<vector<int> > cmps(0);
   vector<int> cmp;
 
   while (v.size() > 0)
@@ -47,7 +47,7 @@ vector<vector<int>> components (vector<vector<int>>& e, vector<int> v)
 
 // Quotient of a graph by a subset of edges
 //x encodes information of edges to remove and edges to contract
-void quotient_graph(vector<vector<int>>& e2, vector<vector<int>>& e, vector<int> v, long long int x)
+void quotient_graph(vector<vector<int> >& e2, vector<vector<int> >& e, vector<int> v, long long int x)
 {
 
   int i, j, k, n, s;
@@ -57,7 +57,7 @@ void quotient_graph(vector<vector<int>>& e2, vector<vector<int>>& e, vector<int>
   
   // e1 is the set of edges that will be removed
   // e2 is the set of edges that are kept
-  vector<vector<int>> e1(0, vector<int>(2)); //, e2(0, vector<int>(2));
+  vector<vector<int> > e1(0, vector<int>(2)); //, e2(0, vector<int>(2));
   for (i = 0; i < e.size(); i++)
   {
     if (((x >> i) & 1) == 0) e2.push_back(e[i]);
@@ -66,7 +66,7 @@ void quotient_graph(vector<vector<int>>& e2, vector<vector<int>>& e, vector<int>
   k = e2.size();
 
   // use the connected components to create a renaming w of the vertices
-  vector<vector<int>> cm = components(e1, v);
+  vector<vector<int> > cm = components(e1, v);
   unordered_map<int,int> w1;
   for (i = 0; i < nv; i++)
   {
@@ -103,10 +103,10 @@ void quotient_graph(vector<vector<int>>& e2, vector<vector<int>>& e, vector<int>
 }
 
 // Determine multiple edges in a graph
-vector<vector<int>> multiple_edges(vector<vector<int>> e)
+vector<vector<int> > multiple_edges(vector<vector<int> > e)
 {
   int i, j;
-  vector<vector<int>> me(0);
+  vector<vector<int> > me(0);
   vector<int> m;
 
   for (i = 0; i < e.size() - 1; i++)
@@ -131,11 +131,11 @@ vector<vector<int>> multiple_edges(vector<vector<int>> e)
 }
 
 // Determine triangles in a graph
-vector<vector<int>> triangles(vector<vector<int>>& e)
+vector<vector<int> > triangles(vector<vector<int> >& e)
 {
   int i, j1, j2, c;
   int k = e.size();
-  vector<vector<int>> tr(0, vector<int>(3));
+  vector<vector<int> > tr(0, vector<int>(3));
 
   for (i = 0; i < k - 2; i++)
   {
@@ -162,11 +162,11 @@ vector<vector<int>> triangles(vector<vector<int>>& e)
 }
 
 // Determine quadrilaterals in a graph
-vector<vector<int>> quadrilaterals(vector<vector<int>>& e)
+vector<vector<int> > quadrilaterals(vector<vector<int> >& e)
 {
   int i, j1, j2, j3, c1, c2;
   int k = e.size();
-  vector<vector<int>> qu(0, vector<int>(4));
+  vector<vector<int> > qu(0, vector<int>(4));
 
   for (i = 0; i < k - 3; i++)
   {
@@ -201,11 +201,11 @@ vector<vector<int>> quadrilaterals(vector<vector<int>>& e)
   return qu;
 }
 
-int laman_number(vector<vector<int>> e1, vector<vector<int>> e2, bool first)
+int laman_number(vector<vector<int> > e1, vector<vector<int> > e2, bool first)
 {
   //needed to distinguish globals for parallel
   vector<long long int> mask1(0), mask2(0);
-  vector<vector<long long int>> keep(0, vector<long long int>(5)), excl(0, vector<long long int>(5));
+  vector<vector<long long int> > keep(0, vector<long long int>(5)), excl(0, vector<long long int>(5));
   int ln=0, k = e1.size();
   vector<int> v1 = vertices(e1), v2 = vertices(e2);
   long long int one = 1;
@@ -213,7 +213,7 @@ int laman_number(vector<vector<int>> e1, vector<vector<int>> e2, bool first)
   bool t1, t2;
   int c, i, j, sx, l1;
   long long int x, y, xm;  
-  vector<vector<int>> q1, q2, s1, s2;
+  vector<vector<int> > q1, q2, s1, s2;
 
   
   // initial conditions (base cases)
@@ -225,7 +225,7 @@ int laman_number(vector<vector<int>> e1, vector<vector<int>> e2, bool first)
 
   // which special edge to choose (one that is involved in the fewest number of triangles)
   // this is a heuristic that seems to work quite well, but there is no guarantee of optimality
-  vector<vector<int>> tr1 = triangles(e1), tr2 = triangles(e2);
+  vector<vector<int> > tr1 = triangles(e1), tr2 = triangles(e2);
   vector<int> cnt(k, 0);
   for (i = 0; i < tr1.size(); i++) for (j = 0; j < 3; j++) cnt[tr1[i][j]]++;
   for (i = 0; i < tr2.size(); i++) for (j = 0; j < 3; j++) cnt[tr2[i][j]]++;
@@ -263,7 +263,7 @@ int laman_number(vector<vector<int>> e1, vector<vector<int>> e2, bool first)
   vector<long long int> vals(5);  
 
   // generate conditions imposed by multiple edges
-  vector<vector<int>> csg;
+  vector<vector<int> > csg;
   for (c = 0; c < 2; c++)
   {
     if (c == 0) csg = multiple_edges(e1);
@@ -361,8 +361,6 @@ int laman_number(vector<vector<int>> e1, vector<vector<int>> e2, bool first)
   if (first) N=(one << (k - 2));
   else N=(one << (k - 1))-1;
 
-  //schedule(dynamic, 5) collapse(3)
-  //#pragma omp parallel for schedule(dynamic, 5) reduction(+:ln) private(i,j,x,xm, t1,y,sx,q1,q2,s1,s2,l1) 
   #pragma omp parallel for reduction(+:ln) private(i,j,x,xm, t1,y,sx,q1,q2,s1,s2,l1) 
   for (x = 1; x < N; x++)
   {

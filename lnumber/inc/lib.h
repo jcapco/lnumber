@@ -30,10 +30,7 @@ extern "C"
 #endif
   //convert symmetric matrix a[i,j] to flat symmetric no diagonal upper triangular 
   //nxn-matrix by getting the index of [i,j] for i>j
-  inline int idx_flat(int i, int j)
-  {
-    return int(i*(i-1)/2 + j);
-  }
+  inline int LIBLNUMBER_LIBRARY_INTERFACE idx_flat(int i, int j);
 
   //stops MSVC from mangling
   size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph, size_t verts);

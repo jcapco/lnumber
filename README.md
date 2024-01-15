@@ -1,9 +1,12 @@
 # Toolkit for Computing the Laman Number
+
+This is a toolkit for computing the number of realizations of Laman graphs. It contains the `lnumber` library and a `nauty` plugin.
+
 The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm, original executable implemented by Christoph Koutschan, that computes the Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasegger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/). 
 
 The `nauty` plugin is a fork of the [Nauty-Laman plugin](https://github.com/martinkjlarsson/nauty-laman-plugin) originally written by Martin Larrson for the utility 
 program `geng` provided by [Nauty](http://pallini.di.uniroma1.it/). The plugin counts the number of non-isomorphic Laman graphs of a given number of 
-vertices. The quick generation of the Laman graphs was implemented by Martin Larrson. I integrated parallel computing of Laman numbers into the plugin via dependency on the `lnumber` library. Parallel computing is done via `openmp`.
+vertices. The quick generation of the Laman graphs was implemented by Martin Larrson. I integrated parallel computing of Laman numbers into the plugin via dependency on the `lnumber` library. Parallel computing is done via `openmp`. With this we can also compute the maximum Laman number (i.e. the number of realizations) of Laman graphs of a given number of vertices.
 
 ## Installation with compiling
 
@@ -11,7 +14,7 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 
 **For the `lnumber` library:** 
 1. Clone this repo.
-1. Build the `lnumber` library. 
+1. Build the `lnumber` library: 
     * You can build with gcc like this (in the `lnumber` folder)
     ```makefile
     gcc -c ./src/laman_number.cpp -I./inc -std=c++11 -O3 -s \
@@ -26,6 +29,17 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
     ```
     * You can use the VS2008 project file `./vs2008/lnumber.vcproj` to build with MSVC. I recommend to link with the fork of `gmp` called `mpir`. For VS2008, I provided the `mpir` library in the `./vs2008/lib` folder. For other MSVC versions, you have to download and build [`mpir`](https://github.com/wbhart/mpir).
 
+
+**For the `lnumber` executable:**
+1. Clone this repo.
+1. Build the `lnumber` executable:
+* You can build with gcc like this (in the `lnumber` folder)
+    ```makefile
+    gcc ../src/sphere_ln.cpp ../src/laman_number.cpp ../src/main.cpp \
+      -I../inc -I../ -lstdc++ -lm -std=c++98 -O3 -s -DNDEBUG -flto -fopenmp \
+      -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -lgmp -lgmpxx -o ../lnumber
+    ```
+    
 **For the `nauty` plugin:**
 1. Build the library `lnumber` as described above
 1. Download and save [`nauty`](http://pallini.di.uniroma1.it/) source files in the `./nauty` folder. 
@@ -44,12 +58,26 @@ in C++ with the flag `-D'PLUGIN="<path to this repo>/prunelaman.h"'` and linked 
     
 5. Once `geng` is compiled you can run it with the `-M` parameter to compute the maximum Laman numbers (see usage)
 
+
 ## Installation with prebuilt binaries (Windows)
 
-1. The executable files for Windows can be copied from the `./bin` folder
-1. Run the file `geng` (see usage).
+1. The executable files and binary libraries for Windows can be copied from the `./bin` folder
+1. Run the file `geng` or `lnumber` (see usage).
 
 ## Usage
+
+**For the `lnumber` executable:**
+
+We use either `lnumber n` or `lnumber -s n`, where `n` is a positive integer encoding the Laman graph
+* `-s`: use this option if you want to compute the number of spherical realizations of the given Laman graph `n`, otherwise the program computes the number of planar realizations
+* `-n`:  the upper half triangle (without diagonal) of the adjancy matrix of the laman graph is a sequence (reading the matrix in row-major order) of bits which
+is a binary number converted to a positive decimal integer n.
+
+*Example:*
+Consider the (unique) Laman graph with four vertices, this can be encoded as n=decimal(11101_2)=61.
+To compute its number of planar realizations (laman number on the plane), we execute `lnumber 61`.
+To compute its number of spherical realization, we execute `lnumber -s 61`.
+
 **For the `nauty` plugin:**
 
 The plugin was originally developed by Martin Larrson who added the following parameters to `geng`:
@@ -93,7 +121,7 @@ Command: `geng $v -K2 -u -M$m:$n`
 v             |     9    |   10    |    11      |    12      |      13       |     14         |
 --------------|:--------:|:-------:|:----------:|:----------:|:-------------:|:--------------:|
 Laman graphs  | 7 222    | 110 132 |  2 039 273 | 44 176 717 | 1 092 493 042 | 30 322 994 747 |
-Max. Laman No.(plane)| 344      | 880     | 2 288      | 6 180      | 15 536        | 42 780 |
+Max. Laman No.<br>(plane)| 344      | 880     | 2 288      | 6 180      | 15 536        | 42 780 |
 laptop    |   0.9 s  | 28 s    | 25.4 min   | \*| \*  | \*  |
 ippo      |   0.2 s  | 6 s     | 3.7 min    | 3.48 hrs      |   \*  | \*  |
 qft1      |   0.1 s  | 2.8 s   | 1.6 min    | 1.2 hrs       |  2.72 days  | \* |
