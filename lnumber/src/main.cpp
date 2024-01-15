@@ -96,25 +96,18 @@ inline void read_list(std::vector<string>& lgraph, std::vector<size_t>& lverts)
 
 }
 
-//jcapco todo: do this with the new format!
 inline size_t highest_lnumber(size_t no_verts, size_t start_index, 
   size_t end_index, size_t interval_parse, char* ifilec, char* ofilec)
 {
   size_t out = 0;
   FILE *ifile=0;
-  /*
-  string filename;
-  sstr << "./laman_d3/laman_" << no_verts << ".bin";
-  ifile = fopen(sstr.str().c_str(),"rb");
-  */
+
   ifile = fopen(ifilec,"rb");
   if (ifile==NULL) 
   {
-    //cout << "Cannot open " << sstr.str() << endl;
     cout << "Cannot open " << ifilec << endl;
     return 0;
   }
-  //sstr.str("");
 
   mpz_class n;
   mpz_ptr nptr= n.get_mpz_t();
@@ -122,13 +115,8 @@ inline size_t highest_lnumber(size_t no_verts, size_t start_index,
   size_t ln=0;
   vector<vector<int>> edge_list;
   
-  //TODO, check for uniqueness, use a for-loop for parallelization?.. nah..
   size_t cnt = -1;
-  //stringstream sstr;
-  //sstr << "lnumber_d3_" << end_index << ".bin";
-  //ofstream ofile(sstr.str().c_str(), ios::out | ios::binary);
   ofstream ofile(ofilec, ios::out | ios::binary);
-  //sstr.str("");
   while (mpz_inp_raw(nptr, ifile))
   {
     ++cnt;
@@ -167,8 +155,6 @@ int main(int argc, char *argv[])
 
   if (strcmp("h",argv[1])==0 && argc==7)
   {
-    //lnumber h 13 0-100 10 laman_13.bin laman_out.bin, 10=interval, 0-100 index (0-0 = all), 13=vertex, 
-    //laman_13.bin = bin file of laman graphs, laman_out.bin = bin output of laman number associated to the graph.
     size_t start_index = atoi(strtok(argv[3],"-\t"));
     size_t end_index = atoi(strtok(NULL,"-\t"));
     ln  = highest_lnumber(atoi(strtok(argv[2], " \t")),start_index,end_index,atoi(strtok(argv[4], " \t")), 
@@ -181,8 +167,7 @@ int main(int argc, char *argv[])
     nvertices= atoi(strtok(argv[2], " \t"));
     
     n.set_str(strtok(argv[1], " \t"),10);
-    edge_list = convert_to_edgelist(n.get_mpz_t(),nvertices);
-    //print_edgelist(edge_list);    
+    edge_list = convert_to_edgelist(n.get_mpz_t(),nvertices);   
     csw.startTimer();
     ln = laman_number(edge_list);
     csw.stopTimer();
