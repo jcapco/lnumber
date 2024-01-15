@@ -68,7 +68,7 @@ After forking the plugin, I added the following parameter:
 ## Algorithm
 The pebble game algorithm (see [Lee and Streinu (2008) Pebble game algorithms and sparse graphs](https://www.sciencedirect.com/science/article/pii/S0012365X07005602)) is used to generated the Laman graphs. While generating the graphs our algorithm (see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/)), implemented in the `liblnumber` library, is used in parallel to compute the Laman numbers. 
 
-`___`
+<hr>
 
 **What follows are for realizations of Laman graph on the plane!**
 
