@@ -35,9 +35,9 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 1. Build the `lnumber` executable:
 * You can build with gcc like this (in the `lnumber` folder)
     ```makefile
-    gcc ../src/sphere_ln.cpp ../src/laman_number.cpp ../src/main.cpp \
-      -I../inc -I../ -lstdc++ -lm -std=c++98 -O3 -s -DNDEBUG -flto -fopenmp \
-      -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -lgmp -lgmpxx -o ../lnumber
+    gcc ./src/sphere_ln.cpp ./src/laman_number.cpp ./src/main.cpp \
+      -I./inc -lstdc++ -lm -std=c++98 -O3 -s -DNDEBUG -flto -fopenmp \
+      -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -lgmp -lgmpxx -o ./lnumber
     ```
     
 **For the `nauty` plugin:**
