@@ -1,8 +1,8 @@
 # Toolkit for Computing the Laman Number
 
-This is a toolkit for computing the number of realizations of Laman graphs. It contains the `lnumber` library and a `nauty` plugin.
+This is a toolkit for computing the number of realizations of Laman graphs. It contains the `lnumber` library, the `lnumber` executable and a `nauty` plugin.
 
-The Laman number library `lnumber` is meant to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements a fast algorithm, original executable implemented by Christoph Koutschan, that computes the Laman number of a Laman graph based on our paper (with M. Gallet, G. Grasegger, C. Koutschan, N. Lubbes and J. Schicho) see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/). 
+The Laman number library `lnumber` is designed to be used as an external dynamic library by programs such as the Nauty Laman plugin. The library implements fast algorithms that computes the Laman number (i.e. the number of realizations) of a Laman graph. The algorithms are based on the papers [Capco et. al. The number of Realization of a Laman Graph](https://doi.org/10.1137/17M1118312) for planar realizations and [Gallet M. et. al. Counting Realizations of Laman Graphs on the Sphere](https://doi.org/10.37236/8548)  for spherical realizations. The `lnumber` executable is a separate application (prelimanary version of the executable was initially implemented by Christoph Koutschan) that does not depend on the library but uses the same source. It shares the same functionality as the library, allowing users to query the Laman number from command line.
 
 The `nauty` plugin is a fork of the [Nauty-Laman plugin](https://github.com/martinkjlarsson/nauty-laman-plugin) originally written by Martin Larrson for the utility 
 program `geng` provided by [Nauty](http://pallini.di.uniroma1.it/). The plugin counts the number of non-isomorphic Laman graphs of a given number of 
@@ -24,8 +24,8 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
     gcc -c ./src/lib.cpp -I./inc -std=c++11 -O3 -s -DNDEBUG \
       -flto -fopenmp -fpic -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare \
       -fpic -o ./lib.o
-    
-    gcc -shared -lstdc++ -lm -lgmp -lgmpxx -lgomp -o ./liblnumber.a ./lib.o -fopenmp 
+
+    gcc -shared -lstdc++ -lm -lgmp -lgmpxx -lgomp -o ./liblnumber.a ./lib.o ./laman_number.o -fopenmp 
     ```
     * You can use the VS2008 project file `./vs2008/lnumber.vcproj` to build with MSVC. I recommend to link with the fork of `gmp` called `mpir`. For VS2008, I provided the `mpir` library in the `./vs2008/lib` folder. For other MSVC versions, you have to download and build [`mpir`](https://github.com/wbhart/mpir).
 
@@ -45,14 +45,13 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 1. Download and save [`nauty`](http://pallini.di.uniroma1.it/) source files in the `./nauty` folder. 
 1. Build all objects from the `nauty` makefile (if you are building with gcc). You can use the VS2008 project file, `./vs2008/nauty.vcproj` to build nauty with MSVC. There are no dependencies.
 1. `geng` has to be rebuilt 
-in C++ with the flag `-D'PLUGIN="<path to this repo>/prunelaman.h"'` and linked with `lnumber`. It is also important to activate `openmp` when building, otherwise the program may still use multiple threads but there will be no speedup for parallel computing and multiple core computers will have roughly the same runtime as a single core one.
-    * If you build with gcc, you can build `geng` as follows (in the `geng` folder)
+in C++ with the flag `-D'PLUGIN="<path to this repo>/nauty/plugins/prunelaman.h"'` and linked with `lnumber`. It is also important to activate `openmp` when building, otherwise the program may still use multiple threads but there will be no speedup for parallel computing and multiple core computers will have roughly the same runtime as a single core one.
+    * If you build with gcc, you can build `geng` as follows (in the `nauty` folder)
     ```makefile
-    g++  -Wno-write-strings -std=c++98 -I./ -o geng -fopenmp -O3 -s \ 
-      -mpopcnt -march=native -D'PLUGIN="<path to this repo>/prunelaman.h"' \
-      -DMAXN=WORDSIZE -DWORDSIZE=32 geng.c gtoolsW.o nautyW1.o nautilW1.o \
-      naugraphW1.o schreier.o naurng.o  -L. -lstdc++ -lm -llnumber \
-      -lgmpxx -lgomp -lgmp
+    g++  -Wno-write-strings -std=c++98 -I./ -I../ -o geng -fopenmp -O3 -s \ 
+      -mpopcnt -march=native -D'PLUGIN="./plugins/prunelaman.h"' -DMAXN=WORDSIZE \ 
+      -DWORDSIZE=32 geng.c gtoolsW.o nautyW1.o nautilW1.o naugraphW1.o schreier.o \
+      naurng.o  -L. -L../lnumber -lstdc++ -lm -llnumber -lgmpxx -lgomp -lgmp
     ```
     * If you are using MSVC you can compile and link using the VS2008 project file `./vs2008/geng.vcproj`. You will need to link with `nauty` and `mpir`. For VS2008, these dependencies (`lib` and `dll`) in  the `./vs2008/lib/` and `./bin` folders. 
     
