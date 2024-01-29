@@ -17,11 +17,11 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 1. Build the `lnumber` library: 
     * You can build with gcc like this (in the `lnumber` folder)
     ```makefile
-    gcc -c ./src/laman_number.cpp -I./inc -std=c++11 -O3 -s \
+    gcc -c ./src/laman_number.cpp -I./inc -std=c++11 -O3 -s -DLIBLNUMBER_EXPORTS \
       -DNDEBUG -flto -fopenmp -fpic -m64 -Wall -Wextra -Wno-unknown-pragmas \
       -Wno-sign-compare -fpic -o ./laman_number.o
 
-    gcc -c ./src/lib.cpp -I./inc -std=c++11 -O3 -s -DNDEBUG \
+    gcc -c ./src/lib.cpp -I./inc -std=c++11 -O3 -s -DNDEBUG -DLIBLNUMBER_EXPORTS \
       -flto -fopenmp -fpic -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare \
       -fpic -o ./lib.o
 
@@ -39,21 +39,21 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
       -I./inc -lstdc++ -lm -std=c++98 -O3 -s -DNDEBUG -flto -fopenmp \
       -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -lgmp -lgmpxx -o ./lnumber
     ```
-    
+
 **For the `nauty` plugin: **
 
 
 1. Build the library `lnumber` as described above
-1. Download and save [`nauty` 2.8.6](https://pallini.di.uniroma1.it/nauty2_8_6.tar.gz) source files in the `./nauty` folder. For the moment we have to adhere to Nauty 2.8.6! A new version depending on Nauty 2.8.8 will soon appear.
+1. Download and save [`nauty`](https://pallini.di.uniroma1.it) source files in the `./nauty` folder. 
 1. Build all objects from the `nauty` makefile (if you are building with gcc). You can use the VS2008 project file, `./vs2008/nauty.vcproj` to build nauty with MSVC. There are no dependencies.
 1. `geng` has to be rebuilt 
 in C++ with the flag `-D'PLUGIN="<path to this repo>/nauty/plugins/prunelaman.h"'` and linked with `lnumber`. It is also important to activate `openmp` when building, otherwise the program may still use multiple threads but there will be no speedup for parallel computing and multiple core computers will have roughly the same runtime as a single core one.
     * If you build with gcc, you can build `geng` as follows (in the `nauty` folder)
     ```makefile
-    g++  -Wno-write-strings -std=c++98 -I./ -I../ -o geng -fopenmp -O3 -s \ 
-      -mpopcnt -march=native -D'PLUGIN="./plugins/prunelaman.h"' -DMAXN=WORDSIZE \ 
-      -DWORDSIZE=32 geng.c gtoolsW.o nautyW1.o nautilW1.o naugraphW1.o schreier.o \
-      naurng.o  -L. -L../lnumber -lstdc++ -lm -llnumber -lgmpxx -lgomp -lgmp
+    gcc  -Wno-write-strings -I./ -I../ -o geng -fopenmp -O3 -s  -mpopcnt \
+      -march=native -D'PLUGIN="./plugins/prunelaman.h"' -DNDEBUG -DMAXN=WORDSIZE \
+      -DWORDSIZE=32 geng.c gtoolsW.o nautyW1.o nautilW1.o naugraphW1.o \
+      schreier.o naurng.o  -L. -L../lnumber -lm -llnumber -lgomp -lgmp      
     ```
     * If you are using MSVC you can compile and link using the VS2008 project file `./vs2008/geng.vcproj`. You will need to link with `nauty` and `mpir`. For VS2008, these dependencies (`lib` and `dll`) in  the `./vs2008/lib/` and `./bin` folders. 
     

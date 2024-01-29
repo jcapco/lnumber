@@ -1,6 +1,10 @@
 /* Copyright (c) 2020 Martin Larsson, 2023 extended and modified by Jose Capco */
 
 /* Add this flag when compiling geng: -D'PLUGIN="prunelaman.h"' */
+#pragma once
+#if !defined(__cplusplus) && defined(_MSC_VER) && _MSC_VER < 1900
+  #define inline __inline
+#endif
 
 #include <lnumber/inc/lib.h>
 #include <omp.h>
@@ -8,10 +12,10 @@
 /* Using rationals for (k,l) comes with a small overhead. Define this macro to use integers for (k,l). */
 // #define INT_KL
 
-static const size_t g_collect_no = 300;
+#define g_collect_no 300
 static double g_start_time = 0;
-static mpz_class g_graphs[g_collect_no];
-static mpz_class g_max_graph = 0; 
+static mpz_t g_graphs[g_collect_no];
+static mpz_t g_max_graph; 
 static size_t g_iter = 0;
 static long g_mod_iter = 0;
 static long g_mod = 0;
@@ -138,6 +142,13 @@ static const int MultiplyDeBruijnBitPosition[32] =
       else                                                                                  \
         fprintf(stderr, ">A Laman plugin -K%ldL%ldN%d\n", tightkn, tightln, minn);        \
     }\
+  }\
+  if (max_lnumber_flag) \
+  { \
+    size_t i=0; \
+    mpz_init(g_max_graph); \
+    for (i = 0; i<g_collect_no; ++i) \
+      mpz_init(g_graphs[i]); \
   }
 
 static int (*prune)(graph *, int, int);
@@ -156,25 +167,27 @@ static size_t max_lnumber=0;
 static boolean max_lnumber_flag = FALSE;
 
 
-inline void convert_to_mpz(graph* g ,mpz_ptr nptr,int n)
+static inline void convert_to_mpz(graph* g ,mpz_ptr nptr,int n)
 {
-  for (int i=1; i<n;++i)
-    for (int j=0;j<i;++j)
+  int i=0, j=0;
+  for (i=1; i<n;++i)
+    for (j=0;j<i;++j)
       if (g[i] & bit[j])
         mpz_setbit(nptr,idx_flat(i,j));
 }
 
-inline bool is_degree_two(graph* g, int verts)
+static inline boolean is_degree_two(graph* g, int verts)
 {
   size_t deg = 0;
-  for (int i=0; i<verts;++i)
+  int i=0,j=0;
+  for (i=0; i<verts;++i)
   {
     deg = 0;
-    for (int j=0;j<verts;++j)      
+    for (j=0;j<verts;++j)      
       if (j!=i && (g[i] & bit[j])) deg++;
-    if (deg == 2) return true;
+    if (deg == 2) return TRUE;
   }
-  return false;
+  return FALSE;
 }
 
 /* If OUTPROC is defined as above, this gets called whenever a new graph has
@@ -198,6 +211,7 @@ void countgraphs(FILE *f, graph *g, int n)
 //jcapco todo : collect and parallelize lamannumber counting.
 void update_max_lnumber(FILE *f, graph *g, int n)
 { 
+  int i=0;
   if (max_lnumber_flag)
   { 
     if (g_modN>0)
@@ -205,23 +219,22 @@ void update_max_lnumber(FILE *f, graph *g, int n)
       g_mod_iter = (g_mod_iter+1)%g_modN;
       if (g_mod_iter != g_mod) return;
     }
-    if (n>5 && is_degree_two(g,n)) return;
-    mpz_class& npz = g_graphs[g_iter];
-    npz = 0;
-    convert_to_mpz(g,npz.get_mpz_t(),n);
-    ++g_iter;
-    size_t temp = 0;
+    if (n>5 && is_degree_two(g,n)) return;    
+    mpz_set_ui(g_graphs[g_iter],0);
+    convert_to_mpz(g,g_graphs[g_iter],n);
+    ++g_iter;    
     if (g_iter == g_collect_no)
     {
+      size_t temp = 0; 
 #pragma omp parallel for 
-      for (int i=0; i<g_iter;++i)
+      for (i=0; i<g_iter;++i)
       {
-        temp = laman_numbern(g_graphs[i].get_mpz_t(), maxn);      
+        temp = laman_numbern(g_graphs[i], maxn);      
 #pragma omp critical
         {
           if (temp>max_lnumber) 
           {
-            g_max_graph = g_graphs[i];
+            mpz_set(g_max_graph, g_graphs[i]);
             max_lnumber = temp;
           }
         }
@@ -238,17 +251,17 @@ void max_lnumber_report(nauty_counter nout, double cpu)
   {
     //jcapco todo: complete what's remaining //private(temp)
     size_t temp = 0; 
-
+    int i=0;
 #pragma omp parallel for 
-    for (int i=0; i<g_iter;++i)
-    {
-      temp = laman_numbern(g_graphs[i].get_mpz_t(), maxn);      
+    for (i=0; i<g_iter;++i)
+    {    
+      temp = laman_numbern(g_graphs[i], maxn);      
 #pragma omp critical
       {
         if (temp>max_lnumber) 
         {
           max_lnumber = temp;
-          g_max_graph = g_graphs[i];
+          mpz_set(g_max_graph,g_graphs[i]);
         }
       }
     }
@@ -257,9 +270,13 @@ void max_lnumber_report(nauty_counter nout, double cpu)
       fprintf(stderr, ">Z %ld mod %ld\n", g_mod,g_modN);
     fprintf(stderr, ">Z with maximum Laman number %ld\n", max_lnumber);
     fprintf(stderr, ">Z Max. Laman number Laman graph ");
-    mpz_out_str(stderr,10,g_max_graph.get_mpz_t());
+    mpz_out_str(stderr,10,g_max_graph);
     fprintf(stderr, "\n>Z wall clock elapsed: %f\n", omp_get_wtime()-g_start_time);
     fflush(stderr);
+    i=g_collect_no;
+    while (i--)
+      mpz_clear(g_graphs[i]);
+    mpz_clear(g_max_graph);
   }
 }
 

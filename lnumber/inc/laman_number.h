@@ -17,10 +17,12 @@ int laman_number(std::vector<std::vector<int> > e1, std::vector<std::vector<int>
 
 //convert symmetric matrix a[i,j] to flat symmetric no diagonal upper triangular 
 //nxn-matrix by getting the index of [i,j] for i>j
+#if !defined(LIBLNUMBER_EXPORTS)
 inline int idx_flat(int i, int j)
 {
   return int(i*(i-1)/2 + j);
 }
+#endif
 
 // Vertices of a graph (given by its edges)
 inline std::vector<int> vertices (std::vector<std::vector<int> >& e)
