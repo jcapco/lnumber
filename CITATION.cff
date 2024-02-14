@@ -1,17 +1,18 @@
+# This CITATION.cff file was generated with cffinit.
+# Visit https://bit.ly/cffinit to generate yours today!
+
 cff-version: 1.2.0
-title: Toolkit for Computing the Laman Number
+title: >- 
+  Toolkit for Computing the Laman Number
 message: >-
-  If you use this software, please cite it using the
-  metadata from this file.
+  Please cite this software using the metadata from
+  'preferred-citation'.
 type: software
 authors:
   - given-names: Jose
     family-names: Capco
-identifiers:
-  - type: doi
-    value: 10.5281/zenodo.8301012
-repository-code: 'https://github.com/jcapco/lnumber'
-abstract: >-
-  This is a toolkit for computing the number of realizations
-  of Laman graphs. 
+    email: jcapco@risc.jku.at
+    orcid: 'https://orcid.org/0000-0000-0000-0000'
+version: 0.2
+repository-code: "https://github.com/jcapco/lnumber"
 license: MIT
