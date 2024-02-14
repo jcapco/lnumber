@@ -40,8 +40,7 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
       -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -lgmp -lgmpxx -o ./lnumber
     ```
 
-**For the `nauty` plugin: **
-
+**For the `nauty` plugin:**
 
 1. Build the library `lnumber` as described above
 1. Download and save [`nauty`](https://pallini.di.uniroma1.it) source files in the `./nauty` folder. 
