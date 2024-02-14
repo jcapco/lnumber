@@ -1,11 +1,17 @@
 cff-version: 1.2.0
-message: "If you use this software, please cite it as below."
+title: Toolkit for Computing the Laman Number
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
 authors:
-- family-names: "Capco"
-  given-names: "Jose"
-  orcid: "https://orcid.org/0000-0000-0000-0000"
-title: "Maximum Laman Number"
-version: 0.1
-doi: 10.5281/zenodo.8301013
-date-released: 2023-08-30
-url: "https://github.com/jcapco/lnumber"
+  - given-names: Jose
+    family-names: Capco
+identifiers:
+  - type: doi
+    value: 10.5281/zenodo.8301012
+repository-code: 'https://github.com/jcapco/lnumber'
+abstract: >-
+  This is a toolkit for computing the number of realizations
+  of Laman graphs. 
+license: MIT
