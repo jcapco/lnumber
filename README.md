@@ -142,6 +142,18 @@ Some of the benchmarks have been achieved using the LEO HPC infrastructure of th
 I would also like to thank [RISC](https://risc.jku.at/) for allowing me to use the RISC-DESY server cluster for some of my benchmarks.
 
 ## Citing
- 
-[![DOI](https://zenodo.org/badge/683425893.svg)](https://zenodo.org/badge/latestdoi/683425893)
+ Link to Zenodo DOI: 
+ [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.8301012.svg)](https://zenodo.org/doi/10.5281/zenodo.8301012)
 
+This section exists because currently I am having difficulties syncing with Zenodo if I have a `.cff` file in the repository for citation. To cite this work you can use the 
+following metadata
+
+  ```
+    title: Toolkit for Computing the Laman Number
+    authors:
+    - given-names: Jose
+    - family-names: Capco
+    repository-code: "https://github.com/jcapco/lnumber"
+    doi: 10.5281/zenodo.8301012
+    license: MIT
+  ```
