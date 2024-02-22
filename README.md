@@ -132,6 +132,28 @@ leo5-64x11 | \*  | \*  | \*  | \*  | \*  | 5.55days |
 
 \* Not Measured
 
+## Python
+
+A Python package that calls the `lnumber` library for the benefit of Python users is available. Users can install this in python using `pip`: 
+```
+pip install lnumber
+```
+
+For Windows users `pip` will get the prebuilt binary wheel for Python 2.x and Python 3.x. Both 32bit and 64bit Python installations are supported. Windows users will need the [Microsoft Visual C++ 2008 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=26368) .
+
+For Linux/macOS users `pip` will get the source and compiles using `gcc`. Linux/macOS users will need the [GNU compiler collection](https://gcc.gnu.org). 
+
+Here is a sample Python code using the `lnumber` package
+```
+from lnumber import *
+
+#number of planar realizations of the graph 1813573113164
+lnumber(1813573113164)
+
+#number of spherical realizations of the graph 1813573113164
+lnumbers(1813573113164)
+```
+
 ## Acknowledgement
 
 Many thanks to my co-authors in the first paper proposing the algorithm and other people who motivated me to do this:
