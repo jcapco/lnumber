@@ -27,7 +27,7 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 
     gcc -shared -lstdc++ -lm -lgmp -lgmpxx -lgomp -o ./liblnumber.a ./lib.o ./laman_number.o -fopenmp 
     ```
-    * You can use the VS2008 project file `./vs2008/lnumber.vcproj` to build with MSVC. I recommend to link with the fork of `gmp` called `mpir`. For VS2008, I provided the `mpir` library in the `./vs2008/lib` folder. For other MSVC versions, you have to download and build [`mpir`](https://github.com/wbhart/mpir).
+    * You can use the VS2008 project file `./vs2008/lnumber.vcproj` to build with MSVC. I recommend to link with the fork of `gmp` called `mpir`. For VS2008, I provided the `mpir` import libraries (for Release) in the `./vs2008/lib/` folder. For other MSVC versions, you have to download and build [`mpir`](https://github.com/wbhart/mpir).
 
 
 **For the `lnumber` executable:**
@@ -47,7 +47,7 @@ vertices. The quick generation of the Laman graphs was implemented by Martin Lar
 1. Build all objects from the `nauty` makefile (if you are building with gcc). You can use the VS2008 project file, `./vs2008/nauty.vcproj` to build nauty with MSVC. There are no dependencies.
 1. `geng` has to be rebuilt 
 in C++ with the flag `-D'PLUGIN="<path to this repo>/nauty/plugins/prunelaman.h"'` and linked with `lnumber`. It is also important to activate `openmp` when building, otherwise the program may still use multiple threads but there will be no speedup for parallel computing and multiple core computers will have roughly the same runtime as a single core one.
-    * If you build with gcc, you can build `geng` as follows (in the `nauty` folder)
+    * If you use gcc, you can build `geng` as follows (in the `nauty` folder)
     ```makefile
     gcc  -Wno-write-strings -I./ -I../ -o geng -fopenmp -O3 -s  -mpopcnt \
       -march=native -D'PLUGIN="./plugins/prunelaman.h"' -DNDEBUG -DMAXN=WORDSIZE \
@@ -134,14 +134,14 @@ leo5-64x11 | \*  | \*  | \*  | \*  | \*  | 5.55days |
 
 ## Python
 
-A Python package that calls the `lnumber` library for the benefit of Python users is available. Users can install this in python using `pip`: 
+A Python package that calls the `lnumber` library is available. Users can install this in python using `pip`: 
 ```
 pip install lnumber
 ```
 
 For Windows users `pip` will get the prebuilt binary wheel for Python 2.x and Python 3.x. Both 32bit and 64bit Python installations are supported. Windows users will need the [Microsoft Visual C++ 2008 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=26368) .
 
-For Linux/macOS users `pip` will get the source and compiles using `gcc`. Linux/macOS users will need the [GNU compiler collection](https://gcc.gnu.org). 
+For Linux/macOS users `pip` will get the source and compile using `gcc`. Linux/macOS users will need the [GNU compiler collection](https://gcc.gnu.org) and the [GNU Multiple Precision Arithmetic Library](https://gmplib.org/). 
 
 Here is a sample Python code using the `lnumber` package
 ```
