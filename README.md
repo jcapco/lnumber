@@ -94,7 +94,7 @@ After forking the plugin, I added the following parameter:
 **Note:** The `geng` plugin will parse the *cpu clock* and the *wall clock*. Since we are computing in parallel, we use the *wall clock* (`omp_get_wtime`) in the benchmarks below.
 
 ## Algorithm
-The pebble game algorithm (see [Lee and Streinu (2008) Pebble game algorithms and sparse graphs](https://www.sciencedirect.com/science/article/pii/S0012365X07005602)) is used to generated the Laman graphs. While generating the graphs our algorithm (see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/)), implemented in the `liblnumber` library, is used in parallel to compute the Laman numbers on the plane. For computing the Laman numbers on the sphere. An improved version of the initial algorithm presented in [Gallet M. et. al. Counting Realizations of Laman Graphs on the Sphere](https://doi.org/10.37236/8548) was used. This improved algorithm is set to be published soon.
+The pebble game algorithm (see [Lee and Streinu (2008) Pebble game algorithms and sparse graphs](https://www.sciencedirect.com/science/article/pii/S0012365X07005602)) is used to generated the Laman graphs. While generating the graphs our algorithm (see [Capco et. al. The number of Realization of a Laman Graph](http://www.koutschan.de/data/laman/)), implemented in the `liblnumber` library, is used in parallel to compute the Laman numbers on the plane. For computing the Laman numbers on the sphere, an improved version of the initial algorithm presented in [Gallet M. et. al. Counting Realizations of Laman Graphs on the Sphere](https://doi.org/10.37236/8548) was used. This improved algorithm is set to be published soon.
 
 <hr>
 
