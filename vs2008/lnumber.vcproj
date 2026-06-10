@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				UseUnicodeResponseFiles="false"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(COMMON_DEV)\lib_utils\inc&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\win32\release&quot;;..\inc"
+				AdditionalIncludeDirectories="&quot;$(COMMON_DEV)\lib_utils\inc&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\win32\release&quot;;..\lnumber\inc"
 				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;LIBCAS_EXPORTS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -121,7 +121,7 @@
 				UseUnicodeResponseFiles="false"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="&quot;$(COMMON_DEV)\lib_utils\inc&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\inc&quot;;..\inc"
+				AdditionalIncludeDirectories="&quot;$(COMMON_DEV)\lib_utils\inc&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\inc&quot;;..\lnumber\inc"
 				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -180,7 +180,7 @@
 			Name="inc"
 			>
 			<File
-				RelativePath="..\inc\laman_number.h"
+				RelativePath="..\lnumber\inc\laman_number.h"
 				>
 			</File>
 		</Filter>
@@ -188,15 +188,15 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\src\laman_number.cpp"
+				RelativePath="..\lnumber\src\laman_number.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\main.cpp"
+				RelativePath="..\lnumber\src\main.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\sphere_ln.cpp"
+				RelativePath="..\lnumber\src\sphere_ln.cpp"
 				>
 			</File>
 		</Filter>

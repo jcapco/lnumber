@@ -93,10 +93,10 @@ void Qi(vector<vector<size_t> > &Q01, vector<vector<size_t> > &Q34, const size_t
 }
 
 //our I is their L, return 1???
-bool loop_pass(std::set<size_t>& I, const size_t cntr, void* data)
+bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
 {
   sph_Data* dta = (sph_Data*)data;
-  if (dta->half && cntr > 1U<<(dta->N.size()-1) ) return false;
+  if (dta->half && cntr > 1ULL<<(dta->N.size()-1) ) return false;
 
   vector<vector<size_t> > Q01,Q34;
   size_t dJ = dta->N.size()-I.size();
@@ -108,7 +108,7 @@ bool loop_pass(std::set<size_t>& I, const size_t cntr, void* data)
   if (I.size()+3 <= 4) crI = 1;
   if (dJ+3 <= 4) crJ = 1;
 
-  if (!crJ) //before manipulating I
+  if (crJ*crI!=0) //before manipulating I
   {
     std::vector<size_t> J; 
     set_difference(dta->N.begin(), dta->N.end(), I.begin(), I.end(), std::back_inserter(J));
@@ -117,7 +117,7 @@ bool loop_pass(std::set<size_t>& I, const size_t cntr, void* data)
     crJ = sph_cnt_realizations(&dataJ);
   }
 
-  if (!crI) //I can now be manipulated
+  if (crJ*crI!=0) //I can now be manipulated
   { 
     I.insert(dta->q0[0]); I.insert(dta->q0[1]); I.insert(dta->star); 
     sph_Data dataI(I,Q34);

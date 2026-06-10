@@ -74,16 +74,16 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
 }
 
 //spherical...
-template<class A> inline void powerset_loop(const std::set<A>& a, bool (*f)(std::set<A>&,const size_t, void*), void *data)
+template<class A> inline void powerset_loop(const std::set<A>& a, bool (*f)(std::set<A>&,const unsigned long long, void*), void *data)
 {
   std::set<A> vec;
   size_t size = a.size();
   typename std::set<A>::const_iterator it = a.begin();
 
-  for(size_t i = 0; i < 1U<<size; ++i) //1U=1 as unsigned int
+  for(unsigned long long i = 0; i < 1ULL<<size; ++i) //1U=1 as unsigned int; jcapco todo use gmp
   {
     for(size_t j = 0; j < size; ++j)
-      if(i & 1<<j)
+      if(i & 1ULL<<j)
       {
         std::advance(it,j);
         vec.insert(*it);

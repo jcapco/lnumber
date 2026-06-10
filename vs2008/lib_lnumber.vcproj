@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				UseUnicodeResponseFiles="false"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;..\inc&quot;;&quot;$(MY_EXT)\lib_lib_lnumbersample\0.9.4.2&quot;"
+				AdditionalIncludeDirectories="&quot;..\lnumber\inc&quot;;&quot;$(MY_EXT)\lib_lib_lnumbersample\0.9.4.2&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG; LIBLNUMBER_LIBRARY_INTERFACE"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -119,7 +119,7 @@
 				UseUnicodeResponseFiles="false"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				AdditionalIncludeDirectories="..\inc;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\inc&quot;"
+				AdditionalIncludeDirectories="..\lnumber\inc;&quot;$(MY_EXT)\lib_boost\1.46.1\inc\boost\tr1&quot;;&quot;$(MY_EXT)\lib_boost\1.46.1\inc&quot;;&quot;$(MY_EXT)\lib_mpir\2.2.1\inc&quot;"
 				PreprocessorDefinitions="WIN32;NDEBUG;LIBLNUMBER_EXPORTS"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
@@ -178,15 +178,11 @@
 			Name="inc"
 			>
 			<File
-				RelativePath="..\inc\laman_number.h"
+				RelativePath="..\lnumber\inc\laman_number.h"
 				>
 			</File>
 			<File
-				RelativePath="..\inc\lib.h"
-				>
-			</File>
-			<File
-				RelativePath="..\inc\sphere_ln.h"
+				RelativePath="..\lnumber\inc\lib.h"
 				>
 			</File>
 		</Filter>
@@ -194,11 +190,11 @@
 			Name="src"
 			>
 			<File
-				RelativePath="..\src\laman_number.cpp"
+				RelativePath="..\lnumber\src\laman_number.cpp"
 				>
 			</File>
 			<File
-				RelativePath="..\src\lib.cpp"
+				RelativePath="..\lnumber\src\lib.cpp"
 				>
 			</File>
 		</Filter>
