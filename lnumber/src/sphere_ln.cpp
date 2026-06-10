@@ -108,7 +108,7 @@ bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
   if (I.size()+3 <= 4) crI = 1;
   if (dJ+3 <= 4) crJ = 1;
 
-  if (crJ*crI!=0) //before manipulating I
+  if (!crJ) //before manipulating I
   {
     std::vector<size_t> J; 
     set_difference(dta->N.begin(), dta->N.end(), I.begin(), I.end(), std::back_inserter(J));
@@ -117,7 +117,7 @@ bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
     crJ = sph_cnt_realizations(&dataJ);
   }
 
-  if (crJ*crI!=0) //I can now be manipulated
+  if (!crI) //I can now be manipulated
   { 
     I.insert(dta->q0[0]); I.insert(dta->q0[1]); I.insert(dta->star); 
     sph_Data dataI(I,Q34);
