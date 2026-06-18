@@ -1,28 +1,45 @@
 #pragma once
 
 #pragma warning( push )
-#pragma warning(disable: 4018 4244) //unsigned int comparisons
+#pragma warning(disable: 4018 4244 4267) //unsigned int comparisons, loss of data conversion from size_t to int
 #include <iostream>
 #include <vector>
 #include <set>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
-#ifndef _WIN32
-using namespace std::tr1;
+
+#ifdef _WIN32
+  using namespace boost;
+  #pragma warning(push)
+  #pragma warning(disable: 4146 4244 4800)
+  #include <mpirxx.h>
+  #pragma warning(pop)
 #else
-using namespace boost;
+using namespace std::tr1;
+  #ifdef __cplusplus
+    #include <gmpxx.h>
+#else
+    #include <gmp.h>
+  #endif
 #endif
 
 int laman_number(std::vector<std::vector<int> > e1, std::vector<std::vector<int> > e2, bool first=false);
 
 //convert symmetric matrix a[i,j] to flat symmetric no diagonal upper triangular 
 //nxn-matrix by getting the index of [i,j] for i>j
-#if !defined(LIBLNUMBER_EXPORTS)
+#ifndef LIBLNUMBER_EXPORTS
 inline int idx_flat(int i, int j)
 {
   return int(i*(i-1)/2 + j);
 }
 #endif
+
+template<class T>
+inline int int_ceil(T t)
+{
+  int i = (int)t; /* truncate */
+  return i + ( i < t ); /* convert trunc to ceil */
+}
 
 // Vertices of a graph (given by its edges)
 inline std::vector<int> vertices (std::vector<std::vector<int> >& e)
@@ -118,6 +135,7 @@ struct sph_Data
 
 //bool sph_loop_pass(std::set<size_t>& I, const size_t cntr, void* data);
 
-size_t sph_cnt_realizations(sph_Data* data);
+//size_t sph_cnt_realizations(sph_Data* data);
+
 
 #pragma warning(pop)

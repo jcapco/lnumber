@@ -44,10 +44,13 @@ extern "C"
 
   //inline int LIBLNUMBER_LIBRARY_INTERFACE idx_flat(int i, int j);
   //stops MSVC from mangling
-  size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph, size_t verts);
+  //size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph, size_t verts);
+  size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph);
   //compute laman number of a nauty dense graph
   size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_nauty(unsigned int* ngraph, int verts);
   size_t LIBLNUMBER_LIBRARY_INTERFACE laman_numbern(mpz_ptr nptr, size_t verts);
+  size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_spherical(char* graph);
+  size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_sphericaln(mpz_ptr nptr);
 
 #ifdef __cplusplus
 }

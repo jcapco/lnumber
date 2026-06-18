@@ -1,4 +1,5 @@
-#include <laman_number.h>
+//#include <laman_number.h>
+#include <sphere_ln.h>
 
 #ifdef _WIN32
 #pragma warning(push)
@@ -17,12 +18,14 @@
 
 using namespace std;
 
+/*
 template<class T>
 inline int int_ceil(T t)
 {
-  int i = (int)t; /* truncate */
-  return i + ( i < t ); /* convert trunc to ceil */
+  int i = (int)t; 
+  return i + ( i < t ); 
 }
+*/
 
 inline std::vector<std::vector<int> > convert_to_edgelist(mpz_ptr nptr, int n=0)
 {
@@ -202,6 +205,14 @@ int main(int argc, char *argv[])
     nvertices = mpz_sizeinbase(n.get_mpz_t(),2)-1; //floor(log2(n))
     nvertices = int_ceil((1+std::sqrt(1+8.0f*nvertices))/2.0f);
     cout << n << " has " << nvertices << " vertices\n";
+    if (nvertices<=2)
+    {
+      if (argc == 2) cout << "Planar ";
+      else cout << "Spherical  ";
+      cout << "Laman number of " << n << ": 1\n"; //planar = 6180, for ca. 4.3sec. in my laptop
+      cout << "Elapsed time: " << 0 << " seconds\n";  
+      return 0;
+    }
 
     time = omp_get_wtime();
     if (argc == 2)

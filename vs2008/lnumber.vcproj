@@ -183,6 +183,10 @@
 				RelativePath="..\lnumber\inc\laman_number.h"
 				>
 			</File>
+			<File
+				RelativePath="..\..\lnumber\lnumber\inc\sphere_ln.h"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="src"
@@ -193,10 +197,6 @@
 			</File>
 			<File
 				RelativePath="..\lnumber\src\main.cpp"
-				>
-			</File>
-			<File
-				RelativePath="..\lnumber\src\sphere_ln.cpp"
 				>
 			</File>
 		</Filter>

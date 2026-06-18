@@ -1,5 +1,10 @@
 #include <lib.h>
 #include <laman_number.h>
+#include <sphere_ln.h>
+
+#ifndef _WIN32
+#include <cmath>
+#endif
 
 using namespace std;
 
@@ -24,12 +29,12 @@ inline std::vector<std::vector<int>> convert_to_edgelist(mpz_ptr nptr, int n=0)
   return out;
 }
 
-size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph, size_t verts)
+size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number(char* graph) //, size_t verts)
 {
-  vector<vector<int>> edge_list;
   mpz_class n(graph, 10);
-  edge_list = convert_to_edgelist(n.get_mpz_t(),verts);
-  return laman_number(edge_list);
+  size_t nverts = mpz_sizeinbase(n.get_mpz_t(),2)-1; //floor(log2(n))
+  nverts = int_ceil((1+std::sqrt(1+8.0f*nverts))/2.0f);
+  return laman_numbern(n.get_mpz_t(),nverts);
 }
 
 size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_nauty(unsigned int* g, int verts)
@@ -46,6 +51,7 @@ size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_nauty(unsigned int* g, int vert
   return laman_number(edge_list);
 }
 
+#pragma warning(disable: 4267)
 size_t LIBLNUMBER_LIBRARY_INTERFACE laman_numbern(mpz_ptr nptr, size_t verts)
 {
   vector<vector<int>> edge_list;
@@ -53,3 +59,40 @@ size_t LIBLNUMBER_LIBRARY_INTERFACE laman_numbern(mpz_ptr nptr, size_t verts)
   return laman_number(edge_list);
 }
 
+inline void sph_convert_to_data(mpz_ptr nptr, size_t n, sph_Data* data)
+{  
+  if (n>0)
+  {
+    data->N.insert(0); data->N.insert(n);
+  }
+  
+  for (size_t i=1; i<n;++i)
+  {
+    data->N.insert(i);
+    data->N.insert(i+n);
+    for (size_t j=0;j<i;++j)
+      if (mpz_tstbit(nptr,idx_flat(i,j)))
+      {
+        size_t temp[4]={j,i,j+n,i+n};
+        (data->Q).push_back(std::vector<size_t>(temp,temp+4));
+      }
+  }
+}
+
+size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_sphericaln(mpz_ptr nptr)
+{
+  size_t nverts = mpz_sizeinbase(nptr,2)-1; //floor(log2(n))
+  nverts = int_ceil((1+sqrt(1+8.0f*nverts))/2.0f);
+
+  sph_Data data;
+  sph_convert_to_data(nptr, nverts, &data);
+  data.half = true; //because of symmetry take half of the power set in the beginning of algo
+  
+  return 2*sph_cnt_realizations(&data);
+}
+
+size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_spherical(char* graph)
+{
+  mpz_class n(graph, 10);
+  return laman_number_sphericaln(n.get_mpz_t());
+}

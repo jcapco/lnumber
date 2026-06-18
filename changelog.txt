@@ -1,0 +1,14 @@
+0.3
+
+Compute spherical Laman number up to 31 vertices
+
+0.2
+
+Spherical Realizations
+Geng compilable in C
+Compatible with Nauty 2.8.8 
+
+0.1
+
+Compute maximal laman number with multiple processes and multiple threads.
+

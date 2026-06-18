@@ -1,5 +1,5 @@
 #pragma warning( push )
-#pragma warning(disable: 4018 4244) //unsigned int comparisons
+#pragma warning(disable: 4018 4244 4267) //unsigned int comparisons
 
 #include <laman_number.h>
 #include <omp.h>
