@@ -147,10 +147,10 @@ Here is a sample Python code using the `lnumber` package
 ```
 from lnumber import *
 
-#number of planar realizations of the graph 1813573113164
+# 808 number of planar realizations of the graph 1813573113164
 lnumber(1813573113164)
 
-#number of spherical realizations of the graph 1813573113164
+# 1280 number of spherical realizations of the graph 1813573113164
 lnumbers(1813573113164)
 ```
 ## Limitations and Disclaimers
