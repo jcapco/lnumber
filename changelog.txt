@@ -10,5 +10,5 @@ Compatible with Nauty 2.8.8
 
 0.1
 
-Compute maximal laman number with multiple processes and multiple threads.
+Compute maximal Laman number with multiple processes and multiple threads.
 
