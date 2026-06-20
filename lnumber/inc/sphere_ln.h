@@ -85,7 +85,7 @@ void Qi(std::vector<std::vector<size_t> > &Q01, std::vector<std::vector<size_t> 
   if (Q34.size()!= I.size() || Q01.size()!= dJ) cont = true;
 }
 
-//our I is their L, return 1???
+//our I is their L, return 1?
 bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
 {
   using namespace std;
@@ -138,7 +138,6 @@ size_t sph_cnt_realizations(sph_Data* data)
   data->Q.pop_back(); 
   for (size_t i=0; i<4; ++i)
     data->N.erase((data->q0)[i]); 
-  //data->N.erase(&(data->q0)[0],&(data->q0)[0]+4); 
   powerset_loop<size_t>(data->N,loop_pass,data);
 
   return data->sum; //struct data goes out of scope, so its destructor is automatically called!

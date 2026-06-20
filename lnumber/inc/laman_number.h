@@ -133,9 +133,5 @@ struct sph_Data
   {};
 };
 
-//bool sph_loop_pass(std::set<size_t>& I, const size_t cntr, void* data);
-
-//size_t sph_cnt_realizations(sph_Data* data);
-
 
 #pragma warning(pop)

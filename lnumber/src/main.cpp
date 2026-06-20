@@ -1,4 +1,3 @@
-//#include <laman_number.h>
 #include <sphere_ln.h>
 
 #ifdef _WIN32
@@ -17,15 +16,6 @@
 #include <omp.h>
 
 using namespace std;
-
-/*
-template<class T>
-inline int int_ceil(T t)
-{
-  int i = (int)t; 
-  return i + ( i < t ); 
-}
-*/
 
 inline std::vector<std::vector<int> > convert_to_edgelist(mpz_ptr nptr, int n=0)
 {
