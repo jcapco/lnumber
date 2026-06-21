@@ -82,6 +82,8 @@ inline void sph_convert_to_data(mpz_ptr nptr, size_t n, sph_Data* data)
 size_t LIBLNUMBER_LIBRARY_INTERFACE laman_number_sphericaln(mpz_ptr nptr)
 {
   size_t nverts = mpz_sizeinbase(nptr,2)-1; //floor(log2(n))
+  if (nverts > 26) return 0; //exceeds the limit of our implementation
+
   nverts = int_ceil((1+sqrt(1+8.0f*nverts))/2.0f);
 
   sph_Data data;

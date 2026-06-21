@@ -132,6 +132,9 @@ leo5-64x11 | \*  | \*  | \*  | \*  | \*  | 5.55days |
 
 \* Not Measured
 
+I have not yet benchmarked computing the number of spherical realizations. However, the algorithm is at least exponential in the number of vertices. Based on that, I estimate that even the most efficient implementation, of the algorithm (including parallelization) on the fastest supercomputers, it would at least take 50 days to compute the number of spherical realizations of a 26-vertex Laman graph.
+
+
 ## Python
 
 A Python package that calls the `lnumber` library is available. Users can install this in python using `pip`: 
@@ -156,7 +159,7 @@ lnumbers(1813573113164)
 ## Limitations and Disclaimers
 
 - The code and compiled binaries are provided "as-is" without warranty of any kind. I am not responsible for any damages, misuse, or incorrect results arising from its use.
-- The input of `lnumber` must represent Laman graphs that have at least 3 vertices. For computing the number of spherical realizations, the number of vertices cannot exceed 31. 
+- The input of `lnumber` must represent Laman graphs that have at least 3 vertices. For computing the number of spherical realizations, the number of vertices cannot exceed 26. 
 - Users must verify input themselves. The `lnumber` library, executable and its python package do not validate input.
 
 ## Acknowledgement

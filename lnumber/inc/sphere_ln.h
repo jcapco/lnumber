@@ -5,7 +5,7 @@
 
 #include <laman_number.h>
 
-size_t sph_cnt_realizations(sph_Data* data);
+int sph_cnt_realizations(sph_Data* data);
 
 /*
 computes all the Qi i=0,1,2,3,4 in the algo, consisting a vector of 4-tuples, everything is sorted!
@@ -86,19 +86,20 @@ void Qi(std::vector<std::vector<size_t> > &Q01, std::vector<std::vector<size_t> 
 }
 
 //our I is their L, return 1?
-bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
+int loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
 {
   using namespace std;
   sph_Data* dta = (sph_Data*)data;
-  if (dta->half && cntr > 1ULL<<(dta->N.size()-1) ) return false;
+  if (dta->half && cntr > 1ULL<<(dta->N.size()-1) ) //return false;
+    return -1;
 
   vector<vector<size_t> > Q01,Q34;
   size_t dJ = dta->N.size()-I.size();
   
   Qi(Q01,Q34, &(dta->q0[0]), dta->Q, I, dJ, dta->star, dta->cont);
-  if (dta->cont) return true;
+  if (dta->cont) return 0; //return true;
   
-  size_t crI = 0, crJ = 0;  
+  int crI = 0, crJ = 0;  
   if (I.size()+3 <= 4) crI = 1;
   if (dJ+3 <= 4) crJ = 1;
 
@@ -118,19 +119,19 @@ bool loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
     crI = sph_cnt_realizations(&dataI);
   }
 
-
-  dta->sum = dta->sum + crI*crJ;
-  return true;
+  return crI*crJ;
+  //return true;
 }
 
 //we assume data.N has size \ge 3!
-size_t sph_cnt_realizations(sph_Data* data)
+int sph_cnt_realizations(sph_Data* data)
 {
   using namespace std;
   if (data->N.size() <= 4) return 1;
   // if =5, return 1
   // if =6, return 2
 
+  int sum= 0;
   set<size_t>::iterator it = data->N.end();
   --it;
   data->star = (*it)+1;
@@ -138,7 +139,7 @@ size_t sph_cnt_realizations(sph_Data* data)
   data->Q.pop_back(); 
   for (size_t i=0; i<4; ++i)
     data->N.erase((data->q0)[i]); 
-  powerset_loop<size_t>(data->N,loop_pass,data);
+  powerset_loop<size_t>(data->N,loop_pass,sum, data);
 
-  return data->sum; //struct data goes out of scope, so its destructor is automatically called!
+  return sum; //struct data goes out of scope, so its destructor is automatically called!
 }

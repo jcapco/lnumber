@@ -91,7 +91,33 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
 }
 
 //spherical...
-template<class A> inline void powerset_loop(const std::set<A>& a, bool (*f)(std::set<A>&,const unsigned long long, void*), void *data)
+template<class A> inline void powerset_loop(const std::set<A>& a, int (*f)(std::set<A>&,const unsigned long long, void*), int& sum, void *data)
+{
+  int delta  = 0;
+  std::set<A> vec;
+  size_t size = a.size();
+  typename std::set<A>::const_iterator it = a.begin();
+  
+  //jcapco now  
+  for(unsigned long long i = 0; i < 1ULL<<size; ++i)
+  {
+    for(size_t j = 0; j < size; ++j)
+      if(i & 1ULL<<j)
+      {
+        std::advance(it,j);
+        vec.insert(*it);
+        std::advance(it, -int(j));
+      }
+    //if (!f(vec,i,sum,data)) break;
+    delta = f(vec,i,data);
+    if (delta < 0) break;
+    else sum += delta;
+    vec.clear();
+  }
+}
+
+//parallel..
+template<class A> inline void powerset_loop_parallel(const std::set<A>& a, bool (*f)(std::set<A>&,const unsigned long long, void*), size_t& sum, void *data)
 {
   std::set<A> vec;
   size_t size = a.size();
@@ -116,20 +142,24 @@ struct sph_Data
   //N,Q
   bool cont, half;
   std::vector<size_t> q0;
-  size_t sum,star;
+  //size_t sum,star;
+  size_t star;
   std::set<size_t> N;
   std::vector<std::vector<size_t> > Q; 
   
   sph_Data(size_t* NN, size_t n, std::vector<std::vector<size_t> > QQ):
-    cont(false), half(false), sum(0), star(100), N(NN,NN+n),Q(QQ)
+    //cont(false), half(false), sum(0), star(100), N(NN,NN+n),Q(QQ)
+    cont(false), half(false), star(100), N(NN,NN+n),Q(QQ)
   {}
 
     sph_Data(std::set<size_t> NN,std::vector<std::vector<size_t> > QQ):
-    cont(false), half(false), sum(0),  star(100), N(NN),Q(QQ) 
+    //cont(false), half(false), sum(0),  star(100), N(NN),Q(QQ) 
+    cont(false), half(false), star(100), N(NN),Q(QQ) 
   {}
 
   sph_Data(): 
-    cont(false), half(false), sum(0), star(100)
+    //cont(false), half(false), sum(0), star(100)
+    cont(false), half(false), star(100)
   {};
 };
 

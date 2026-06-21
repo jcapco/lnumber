@@ -184,7 +184,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\..\lnumber\lnumber\inc\sphere_ln.h"
+				RelativePath="..\lnumber\inc\sphere_ln.h"
 				>
 			</File>
 		</Filter>
