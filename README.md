@@ -159,7 +159,7 @@ lnumbers(1813573113164)
 ## Limitations and Disclaimers
 
 - The code and compiled binaries are provided "as-is" without warranty of any kind. I am not responsible for any damages, misuse, or incorrect results arising from its use.
-- The input of `lnumber` must represent Laman graphs that have at least 3 vertices. For computing the number of spherical realizations, the number of vertices cannot exceed 26. 
+- The input of `lnumber` must represent Laman graphs that have at least 3 vertices. For computing the number of realizations, the number of vertices cannot exceed 26.
 - Users must verify input themselves. The `lnumber` library, executable and its python package do not validate input.
 
 ## Acknowledgement

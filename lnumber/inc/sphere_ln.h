@@ -86,7 +86,7 @@ void Qi(std::vector<std::vector<size_t> > &Q01, std::vector<std::vector<size_t> 
 }
 
 //our I is their L, return 1?
-int loop_pass(std::set<size_t>& I, const unsigned long long cntr, void* data)
+int loop_pass(std::set<size_t>& I, const uint64_t cntr, void* data)
 {
   using namespace std;
   sph_Data* dta = (sph_Data*)data;
@@ -131,7 +131,7 @@ int sph_cnt_realizations(sph_Data* data)
   // if =5, return 1
   // if =6, return 2
 
-  int sum= 0;
+  //int sum= 0;
   set<size_t>::iterator it = data->N.end();
   --it;
   data->star = (*it)+1;
@@ -139,7 +139,8 @@ int sph_cnt_realizations(sph_Data* data)
   data->Q.pop_back(); 
   for (size_t i=0; i<4; ++i)
     data->N.erase((data->q0)[i]); 
-  powerset_loop<size_t>(data->N,loop_pass,sum, data);
+  return powerset_loop_parallel<size_t>(data->N,loop_pass,data);
+  //return powerset_loop<size_t>(data->N,loop_pass,data);
 
-  return sum; //struct data goes out of scope, so its destructor is automatically called!
+  //return sum; //struct data goes out of scope, so its destructor is automatically called!
 }

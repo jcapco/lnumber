@@ -7,18 +7,21 @@
 #include <set>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
+#include <omp.h>
 
 #ifdef _WIN32
+  //typedef unsigned __int64 uint64_t;
   using namespace boost;
   #pragma warning(push)
   #pragma warning(disable: 4146 4244 4800)
   #include <mpirxx.h>
-  #pragma warning(pop)
+  #pragma warning(pop)  
 #else
-using namespace std::tr1;
+  using namespace std::tr1;
+  #include<cstdint>
   #ifdef __cplusplus
     #include <gmpxx.h>
-#else
+  #else
     #include <gmp.h>
   #endif
 #endif
@@ -91,15 +94,15 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
 }
 
 //spherical...
-template<class A> inline void powerset_loop(const std::set<A>& a, int (*f)(std::set<A>&,const unsigned long long, void*), int& sum, void *data)
+template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
 {
-  int delta  = 0;
+  int delta  = 0, sum=0;
   std::set<A> vec;
   size_t size = a.size();
   typename std::set<A>::const_iterator it = a.begin();
   
   //jcapco now  
-  for(unsigned long long i = 0; i < 1ULL<<size; ++i)
+  for(uint64_t i = 0; i < 1ULL<<size; ++i)
   {
     for(size_t j = 0; j < size; ++j)
       if(i & 1ULL<<j)
@@ -114,27 +117,65 @@ template<class A> inline void powerset_loop(const std::set<A>& a, int (*f)(std::
     else sum += delta;
     vec.clear();
   }
+
+  return sum;
 }
 
 //parallel..
-template<class A> inline void powerset_loop_parallel(const std::set<A>& a, bool (*f)(std::set<A>&,const unsigned long long, void*), size_t& sum, void *data)
+template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
 {
+  int delta  = 0, sum=0;
   std::set<A> vec;
   size_t size = a.size();
   typename std::set<A>::const_iterator it = a.begin();
+  
+  //jcapco now
+  uint64_t N = 1ULL<<size;
 
-  for(unsigned long long i = 0; i < 1ULL<<size; ++i) //1U=1 as unsigned int; jcapco todo use gmp
+  bool stop = false;
+  #pragma omp parallel reduction(+:sum) shared(stop)
   {
-    for(size_t j = 0; j < size; ++j)
-      if(i & 1ULL<<j)
+    uint64_t t = omp_get_thread_num();;
+    uint64_t T = omp_get_num_threads();
+
+    uint64_t base  = N/T; //each thread gets at least this amount of tasks
+    uint64_t extra = N%T; //distribute the remainders to the first threads.
+    uint64_t start = t*base; 
+    uint64_t count = base; 
+    if (t<extra)
+    {
+      start += t; //shift for start
+      count += 1; //we deploy +1 task to each thread until thread_num>=extra
+    }
+    else start += extra;
+
+    //for(uint64_t i = 0; i < 1ULL<<size; ++i)
+    for(uint64_t i = start; i < start+count; ++i)
+    {
+      #pragma omp flush(stop)
+      if (stop) break;
+
+      for(size_t j = 0; j < size; ++j)
+        if(i & 1ULL<<j)
+        {
+          std::advance(it,j);
+          vec.insert(*it);
+          std::advance(it, -int(j));
+        }
+      //if (!f(vec,i,sum,data)) break;
+      delta = f(vec,i,data);
+      if (delta < 0)
       {
-        std::advance(it,j);
-        vec.insert(*it);
-        std::advance(it, -int(j));
+        stop = true;
+        #pragma omp flush(stop)
+        break;
       }
-    if (!f(vec,i,data)) break;
-    vec.clear();
-  }
+      sum += delta;
+      vec.clear();
+    }
+  } //omp parallel
+
+  return sum;
 }
 
 struct sph_Data
