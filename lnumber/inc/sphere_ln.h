@@ -139,8 +139,11 @@ int sph_cnt_realizations(sph_Data* data)
   data->Q.pop_back(); 
   for (size_t i=0; i<4; ++i)
     data->N.erase((data->q0)[i]); 
+#if defined(_MSC_VER) && _MSC_VER < 1900
+  return powerset_loop<size_t>(data->N,loop_pass,data);
+#else
   return powerset_loop_parallel<size_t>(data->N,loop_pass,data);
-  //return powerset_loop<size_t>(data->N,loop_pass,data);
+#endif
 
   //return sum; //struct data goes out of scope, so its destructor is automatically called!
 }

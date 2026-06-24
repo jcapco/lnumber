@@ -63,6 +63,8 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
   // preprocessing: remove vertices of valency/degree 2.
   std::vector<int> v = vertices(e);
   int n = v.size(), ln = 1;
+  if (n>26) return 0; //we will put a cap for more than 26 vertices
+
   std::vector<int> cnt(n);
   unordered_map<int,int> w;
   for (i = 0; i < n; i++)
@@ -121,7 +123,7 @@ template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::s
   return sum;
 }
 
-//parallel..
+#ifndef _MSC_VER
 template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
 {
   int delta  = 0, sum=0;
@@ -130,53 +132,36 @@ template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*
   typename std::set<A>::const_iterator it = a.begin();
   
   //jcapco now
-  uint64_t N = 1ULL<<size;
+  long long N = 1LL << size, i=0;
+  size_t j=0;
 
-  bool stop = false;
-  #pragma omp parallel reduction(+:sum) shared(stop)
+  #pragma omp parallel for reduction(+:sum) private(i,j,it,delta,vec) 
+  for(i = 0; i < N; ++i)
   {
-    uint64_t t = omp_get_thread_num();;
-    uint64_t T = omp_get_num_threads();
-
-    uint64_t base  = N/T; //each thread gets at least this amount of tasks
-    uint64_t extra = N%T; //distribute the remainders to the first threads.
-    uint64_t start = t*base; 
-    uint64_t count = base; 
-    if (t<extra)
-    {
-      start += t; //shift for start
-      count += 1; //we deploy +1 task to each thread until thread_num>=extra
-    }
-    else start += extra;
-
-    //for(uint64_t i = 0; i < 1ULL<<size; ++i)
-    for(uint64_t i = start; i < start+count; ++i)
-    {
-      #pragma omp flush(stop)
-      if (stop) break;
-
-      for(size_t j = 0; j < size; ++j)
-        if(i & 1ULL<<j)
-        {
-          std::advance(it,j);
-          vec.insert(*it);
-          std::advance(it, -int(j));
-        }
-      //if (!f(vec,i,sum,data)) break;
-      delta = f(vec,i,data);
-      if (delta < 0)
+    for(j = 0; j < size; ++j)
+      if(i & 1ULL<<j)
       {
-        stop = true;
-        #pragma omp flush(stop)
-        break;
+        std::advance(it,j);
+        vec.insert(*it);
+        std::advance(it, -int(j));
       }
-      sum += delta;
-      vec.clear();
+    //if (!f(vec,i,sum,data)) break;
+    delta = f(vec,i,data);
+    if (delta < 0) 
+    {
+      #pragma omp cancel for
+      //break;
     }
-  } //omp parallel
+    #pragma omp cancellation point for
+
+    sum += delta;
+    vec.clear();
+  }
 
   return sum;
+
 }
+#endif
 
 struct sph_Data
 {
