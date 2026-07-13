@@ -17,12 +17,13 @@
   #include <mpirxx.h>
   #pragma warning(pop)  
 #else
-  using namespace std::tr1;
-  #include<cstdint>
+  using namespace std::tr1;  
   #ifdef __cplusplus
     #include <gmpxx.h>
+    #include<cstdint>
   #else
     #include <gmp.h>
+    #include<stdint.h>
   #endif
 #endif
 
@@ -96,6 +97,7 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
 }
 
 //spherical...
+#ifdef _MSC_VER
 template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
 {
   int delta  = 0, sum=0;
@@ -123,7 +125,7 @@ template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::s
   return sum;
 }
 
-#ifndef _MSC_VER
+#else
 template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
 {
   int delta  = 0, sum=0;
