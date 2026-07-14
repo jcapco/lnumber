@@ -142,12 +142,14 @@ template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*
 #pragma omp for
     for(i = 0; i < N; ++i)
     {
+      it = a.begin();
+      vec.clear();
       for(j = 0; j < size; ++j)
         if(i & 1ULL<<j)
         {
           std::advance(it,j);
           vec.insert(*it);
-          std::advance(it, -int(j));
+          //std::advance(it, -int(j));
         }
       //if (!f(vec,i,sum,data)) break;
       delta = f(vec,i,data);
@@ -157,11 +159,13 @@ template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*
         //break;
       }
       #pragma omp cancellation point for
+      
+      if (delta > 0)
       {
         #pragma omp atomic
         sum += delta;
       }
-      vec.clear();
+      //vec.clear();
     }
   }
   return sum;
