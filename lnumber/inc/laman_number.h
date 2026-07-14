@@ -17,13 +17,12 @@
   #include <mpirxx.h>
   #pragma warning(pop)  
 #else
-  using namespace std::tr1;  
+  using namespace std::tr1;
+  #include<stdint.h>
   #ifdef __cplusplus
     #include <gmpxx.h>
-    #include<cstdint>
   #else
-    #include <gmp.h>
-    #include<stdint.h>
+    #include <gmp.h>    
   #endif
 #endif
 
@@ -134,7 +133,7 @@ template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*
   typename std::set<A>::const_iterator it = a.begin();
   
   //jcapco now
-  long long N = 1LL << size, i=0;
+  uint64_t N = 1LL << size, i=0;
   size_t j=0;
 
   #pragma omp parallel for reduction(+:sum) private(i,j,it,delta,vec) 
