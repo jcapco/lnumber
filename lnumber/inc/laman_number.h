@@ -136,29 +136,34 @@ template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*
   uint64_t N = 1LL << size, i=0;
   size_t j=0;
 
-  #pragma omp parallel for reduction(+:sum) private(i,j,it,delta,vec) 
-  for(i = 0; i < N; ++i)
+  //#pragma omp parallel for reduction(+:sum) private(i,j,it,delta,vec) 
+#pragma omp parallel private(i,j,it,delta,vec) shared(sum)
   {
-    for(j = 0; j < size; ++j)
-      if(i & 1ULL<<j)
-      {
-        std::advance(it,j);
-        vec.insert(*it);
-        std::advance(it, -int(j));
-      }
-    //if (!f(vec,i,sum,data)) break;
-    delta = f(vec,i,data);
-    if (delta < 0) 
+#pragma omp for
+    for(i = 0; i < N; ++i)
     {
-      #pragma omp cancel for
-      //break;
+      for(j = 0; j < size; ++j)
+        if(i & 1ULL<<j)
+        {
+          std::advance(it,j);
+          vec.insert(*it);
+          std::advance(it, -int(j));
+        }
+      //if (!f(vec,i,sum,data)) break;
+      delta = f(vec,i,data);
+      if (delta < 0) 
+      {
+        #pragma omp cancel for
+        //break;
+      }
+      #pragma omp cancellation point for
+      {
+        #pragma omp atomic
+        sum += delta;
+      }
+      vec.clear();
     }
-    #pragma omp cancellation point for
-
-    sum += delta;
-    vec.clear();
   }
-
   return sum;
 
 }
