@@ -90,11 +90,12 @@ jobs:
             delocate-listdeps --all {dest_dir}/*.whl
 
           # Windows: lib_lnumber.dll is not an extension module, so delvewheel needs
-          # --analyze-existing; vcomp140.dll (MSVC OpenMP runtime) is bundled
+          # --analyze-existing; vcomp140.dll (MSVC OpenMP runtime) is bundled, taken from
+          # System32 (--add-path is searched first) rather than from other programs on PATH
           CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel==1.13.2
           CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
-            delvewheel show --analyze-existing {wheel} &&
-            delvewheel repair --analyze-existing --add-dll vcomp140.dll -w {dest_dir} {wheel}
+            delvewheel show --analyze-existing --add-path C:\Windows\System32 {wheel} &&
+            delvewheel repair --analyze-existing --add-path C:\Windows\System32 --add-dll vcomp140.dll -w {dest_dir} {wheel}
 
       - uses: actions/upload-artifact@v7
         with:
