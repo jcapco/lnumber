@@ -1,0 +1,13 @@
+// Compatibility header used only by the Python package build (pypi/setup.py).
+//
+// lnumber/inc/laman_number.h includes <tr1/unordered_map>, which exists in
+// libstdc++ but not in libc++ (macOS) or modern MSVC. This header is found
+// first on the include path and maps the C++11 container onto the names that
+// laman_number.h uses: std::tr1::unordered_map and, on Windows,
+// boost::unordered_map (the VS2008 branch uses "using namespace boost").
+#pragma once
+
+#include <unordered_map>
+
+namespace std { namespace tr1 { using std::unordered_map; } }
+namespace boost { using std::unordered_map; }
