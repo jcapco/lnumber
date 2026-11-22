@@ -1,1 +1,2 @@
 recursive-include lnumber/inc *.h
+recursive-include compat *

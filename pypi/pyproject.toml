@@ -17,3 +17,4 @@ include-package-data = true
 
 [tool.setuptools.packages.find]
 where = ["."]
+include = ["lnumber*"]
