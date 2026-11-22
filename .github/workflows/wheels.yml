@@ -1,0 +1,130 @@
+# Build the Python wheels and the sdist of the lnumber package (pypi/).
+#
+# The wheels are uploaded as workflow artifacts only; nothing is published to
+# PyPI. The library is a plain shared library loaded with ctypes, so each
+# wheel is tagged py3-none-<platform>: cibuildwheel builds it once and tests
+# it on every selected Python version.
+
+name: Python wheels
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+env:
+  # Reference values: (planar, spherical) for each graph
+  TEST_SCRIPT: >-
+    from lnumber import lnumber, lnumbers;
+    r = [(lnumber(g), lnumbers(g)) for g in (61, 202924855, 1813573113164, 252590061719913632)];
+    print(r);
+    assert r == [(4, 4), (64, 64), (808, 1280), (6180, 8704)], r
+
+jobs:
+  wheels:
+    name: Wheels ${{ matrix.os }} ${{ matrix.arch }}
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-latest       # manylinux and musllinux
+            arch: x86_64
+          - os: ubuntu-24.04-arm    # manylinux and musllinux
+            arch: aarch64
+          - os: macos-14
+            arch: arm64
+            conda_platform: osx-arm64
+            omp_build: hdb3d66b_0
+          - os: macos-15-intel
+            arch: x86_64
+            conda_platform: osx-64
+            omp_build: h8c1e6b9_0
+          - os: windows-latest
+            arch: AMD64
+          - os: windows-11-arm
+            arch: ARM64
+
+    steps:
+      - uses: actions/checkout@v7
+
+      # Staging layout used for the 0.20 release: the C++ sources live inside the package folder
+      - name: Copy the C++ sources into pypi/lnumber
+        shell: bash
+        run: cp -r lnumber/src lnumber/inc pypi/lnumber/
+
+      # Apple's clang does not ship the OpenMP runtime: take libomp from conda-forge
+      # (pinned version and build), which supports macOS 11.0 and later
+      - name: Install libomp from conda-forge
+        if: runner.os == 'macOS'
+        shell: bash
+        run: |
+          curl -Ls https://micro.mamba.pm/api/micromamba/${{ matrix.conda_platform }}/latest | tar -xj -C "$RUNNER_TEMP" bin/micromamba
+          "$RUNNER_TEMP/bin/micromamba" create --yes --root-prefix "$RUNNER_TEMP/mamba" --prefix "$HOME/omp" \
+            --platform ${{ matrix.conda_platform }} --override-channels --channel conda-forge \
+            "llvm-openmp==23.1.6=${{ matrix.omp_build }}"
+          ls -l "$HOME/omp/lib"
+
+      - name: Build and test wheels
+        uses: pypa/cibuildwheel@v4.3.5
+        with:
+          package-dir: pypi
+          output-dir: wheelhouse
+        env:
+          # The wheel is built once (py3-none) and tested on all these versions
+          CIBW_BUILD: "cp310-* cp311-* cp312-* cp313-* cp314-* cp315-*"
+          CIBW_ARCHS: ${{ matrix.arch }}
+          CIBW_BUILD_VERBOSITY: 1
+          CIBW_TEST_COMMAND: python -c "${{ env.TEST_SCRIPT }}"
+
+          # macOS: the -rpath lets delocate find libomp and copy it into the wheel
+          CIBW_ENVIRONMENT_MACOS: >-
+            MACOSX_DEPLOYMENT_TARGET=11.0
+            CPPFLAGS="-I$HOME/omp/include"
+            LDFLAGS="-L$HOME/omp/lib -Wl,-rpath,$HOME/omp/lib"
+          CIBW_REPAIR_WHEEL_COMMAND_MACOS: >-
+            delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel} &&
+            delocate-listdeps --all {dest_dir}/*.whl
+
+          # Windows: lib_lnumber.dll is not an extension module, so delvewheel needs
+          # --analyze-existing; vcomp140.dll (MSVC OpenMP runtime) is bundled
+          CIBW_BEFORE_BUILD_WINDOWS: pip install delvewheel==1.13.2
+          CIBW_REPAIR_WHEEL_COMMAND_WINDOWS: >-
+            delvewheel show --analyze-existing {wheel} &&
+            delvewheel repair --analyze-existing --add-dll vcomp140.dll -w {dest_dir} {wheel}
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: wheels-${{ matrix.os }}-${{ matrix.arch }}
+          path: wheelhouse/*.whl
+
+  sdist:
+    name: Source distribution
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Copy the C++ sources into pypi/lnumber
+        run: cp -r lnumber/src lnumber/inc pypi/lnumber/
+
+      - uses: actions/setup-python@v7
+        with:
+          python-version: "3.x"
+
+      - name: Build the sdist
+        run: |
+          python -m pip install build
+          python -m build --sdist --outdir dist pypi
+
+      - name: Install the sdist and test it
+        run: |
+          python -m pip install dist/*.tar.gz
+          cd "$RUNNER_TEMP" && python -c "$TEST_SCRIPT"
+
+      - uses: actions/upload-artifact@v7
+        with:
+          name: sdist
+          path: dist/*.tar.gz
