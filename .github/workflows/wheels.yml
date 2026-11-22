@@ -57,7 +57,8 @@ jobs:
         run: cp -r lnumber/src lnumber/inc pypi/lnumber/
 
       # Apple's clang does not ship the OpenMP runtime: take libomp from conda-forge
-      # (pinned version and build), which supports macOS 11.0 and later
+      # (pinned version and build), which supports macOS 11.0 and later.
+      # Its license (Apache 2.0 with LLVM exceptions) is shipped with the wheel, see below.
       - name: Install libomp from conda-forge
         if: runner.os == 'macOS'
         shell: bash
@@ -67,6 +68,8 @@ jobs:
             --platform ${{ matrix.conda_platform }} --override-channels --channel conda-forge \
             "llvm-openmp==23.1.6=${{ matrix.omp_build }}"
           ls -l "$HOME/omp/lib"
+          cp "$RUNNER_TEMP/mamba/pkgs/llvm-openmp-23.1.6-${{ matrix.omp_build }}/info/licenses/openmp/LICENSE.TXT" \
+            "$HOME/omp/LICENSE-libomp.txt"
 
       - name: Build and test wheels
         uses: pypa/cibuildwheel@v4.3.5
@@ -80,14 +83,23 @@ jobs:
           CIBW_BUILD_VERBOSITY: 1
           CIBW_TEST_COMMAND: python -c "${{ env.TEST_SCRIPT }}"
 
-          # macOS: the -rpath lets delocate find libomp and copy it into the wheel
+          # macOS: the -rpath lets delocate find libomp and copy it into the wheel;
+          # then libomp's license is added next to it (lnumber/.dylibs/LICENSE-libomp.txt)
+          # and the wheel is repacked, which updates its RECORD
           CIBW_ENVIRONMENT_MACOS: >-
             MACOSX_DEPLOYMENT_TARGET=11.0
             CPPFLAGS="-I$HOME/omp/include"
             LDFLAGS="-L$HOME/omp/lib -Wl,-rpath,$HOME/omp/lib"
+          CIBW_BEFORE_BUILD_MACOS: pip install wheel
           CIBW_REPAIR_WHEEL_COMMAND_MACOS: >-
             delocate-wheel --require-archs {delocate_archs} -w {dest_dir} -v {wheel} &&
-            delocate-listdeps --all {dest_dir}/*.whl
+            delocate-listdeps --all {dest_dir}/*.whl &&
+            rm -rf "$HOME/omp-unpacked" &&
+            python -m wheel unpack -d "$HOME/omp-unpacked" {dest_dir}/*.whl &&
+            cp "$HOME/omp/LICENSE-libomp.txt" "$HOME"/omp-unpacked/*/lnumber/.dylibs/ &&
+            rm {dest_dir}/*.whl &&
+            python -m wheel pack -d {dest_dir} "$HOME"/omp-unpacked/* &&
+            python -m zipfile -l {dest_dir}/*.whl | grep "lnumber/.dylibs/LICENSE-libomp.txt"
 
           # Windows: lib_lnumber.dll is not an extension module, so delvewheel needs
           # --analyze-existing; vcomp140.dll (MSVC OpenMP runtime) is bundled, taken from
