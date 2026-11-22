@@ -23,6 +23,10 @@ else:
       if file.endswith(".so"): break  
     lib = cdll.LoadLibrary(dir+"/"+file)
 
+#the C functions return size_t; without this ctypes assumes int and truncates
+lib.laman_number.restype = c_size_t
+lib.laman_number_spherical.restype = c_size_t
+
 #print lnumber(252590061719913632,12)
 def lnumber(graph):
   global lib
