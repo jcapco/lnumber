@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "lnumber"
+version = "0.20"
+authors = [{ name = "Jose Capco" }]
+dependencies = []
+license = { file = "license.txt" }
+
+[project.urls]
+Homepage = "https://github.com/jcapco/lnumber"
+
+[tool.setuptools]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+where = ["."]
