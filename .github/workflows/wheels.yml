@@ -35,7 +35,7 @@ jobs:
             arch: x86_64
           - os: ubuntu-24.04-arm    # manylinux and musllinux
             arch: aarch64
-          - os: macos-14
+          - os: macos-15            # arm64 (Apple Silicon)
             arch: arm64
             conda_platform: osx-arm64
             omp_build: hdb3d66b_0
