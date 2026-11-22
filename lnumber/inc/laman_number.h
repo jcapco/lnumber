@@ -7,21 +7,18 @@
 #include <set>
 #include <tr1/unordered_set>
 #include <tr1/unordered_map>
-#include <omp.h>
 
 #ifdef _WIN32
-  //typedef unsigned __int64 uint64_t;
   using namespace boost;
   #pragma warning(push)
   #pragma warning(disable: 4146 4244 4800)
   #include <mpirxx.h>
-  #pragma warning(pop)  
+  #pragma warning(pop)
 #else
-  using namespace std::tr1;
-  #include<cstdint>
+using namespace std::tr1;
   #ifdef __cplusplus
     #include <gmpxx.h>
-  #else
+#else
     #include <gmp.h>
   #endif
 #endif
@@ -63,8 +60,6 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
   // preprocessing: remove vertices of valency/degree 2.
   std::vector<int> v = vertices(e);
   int n = v.size(), ln = 1;
-  if (n>26) return 0; //we will put a cap for more than 26 vertices
-
   std::vector<int> cnt(n);
   unordered_map<int,int> w;
   for (i = 0; i < n; i++)
@@ -96,15 +91,13 @@ inline int laman_number(std::vector<std::vector<int> >& e) //edgelist
 }
 
 //spherical...
-template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
+template<class A> inline void powerset_loop(const std::set<A>& a, bool (*f)(std::set<A>&,const unsigned long long, void*), void *data)
 {
-  int delta  = 0, sum=0;
   std::set<A> vec;
   size_t size = a.size();
   typename std::set<A>::const_iterator it = a.begin();
-  
-  //jcapco now  
-  for(uint64_t i = 0; i < 1ULL<<size; ++i)
+
+  for(unsigned long long i = 0; i < 1ULL<<size; ++i) //1U=1 as unsigned int; jcapco todo use gmp
   {
     for(size_t j = 0; j < size; ++j)
       if(i & 1ULL<<j)
@@ -113,81 +106,36 @@ template<class A> inline int powerset_loop(const std::set<A>& a, int (*f)(std::s
         vec.insert(*it);
         std::advance(it, -int(j));
       }
-    //if (!f(vec,i,sum,data)) break;
-    delta = f(vec,i,data);
-    if (delta < 0) break;
-    else sum += delta;
+    if (!f(vec,i,data)) break;
     vec.clear();
   }
-
-  return sum;
 }
-
-#ifndef _MSC_VER
-template<class A> inline int powerset_loop_parallel(const std::set<A>& a, int (*f)(std::set<A>&,const uint64_t, void*), void *data)
-{
-  int delta  = 0, sum=0;
-  std::set<A> vec;
-  size_t size = a.size();
-  typename std::set<A>::const_iterator it = a.begin();
-  
-  //jcapco now
-  long long N = 1LL << size, i=0;
-  size_t j=0;
-
-  #pragma omp parallel for reduction(+:sum) private(i,j,it,delta,vec) 
-  for(i = 0; i < N; ++i)
-  {
-    for(j = 0; j < size; ++j)
-      if(i & 1ULL<<j)
-      {
-        std::advance(it,j);
-        vec.insert(*it);
-        std::advance(it, -int(j));
-      }
-    //if (!f(vec,i,sum,data)) break;
-    delta = f(vec,i,data);
-    if (delta < 0) 
-    {
-      #pragma omp cancel for
-      //break;
-    }
-    #pragma omp cancellation point for
-
-    sum += delta;
-    vec.clear();
-  }
-
-  return sum;
-
-}
-#endif
 
 struct sph_Data
 {
   //N,Q
   bool cont, half;
   std::vector<size_t> q0;
-  //size_t sum,star;
-  size_t star;
+  size_t sum,star;
   std::set<size_t> N;
   std::vector<std::vector<size_t> > Q; 
   
   sph_Data(size_t* NN, size_t n, std::vector<std::vector<size_t> > QQ):
-    //cont(false), half(false), sum(0), star(100), N(NN,NN+n),Q(QQ)
-    cont(false), half(false), star(100), N(NN,NN+n),Q(QQ)
+    cont(false), half(false), sum(0), star(100), N(NN,NN+n),Q(QQ)
   {}
 
     sph_Data(std::set<size_t> NN,std::vector<std::vector<size_t> > QQ):
-    //cont(false), half(false), sum(0),  star(100), N(NN),Q(QQ) 
-    cont(false), half(false), star(100), N(NN),Q(QQ) 
+    cont(false), half(false), sum(0),  star(100), N(NN),Q(QQ) 
   {}
 
   sph_Data(): 
-    //cont(false), half(false), sum(0), star(100)
-    cont(false), half(false), star(100)
+    cont(false), half(false), sum(0), star(100)
   {};
 };
+
+//bool sph_loop_pass(std::set<size_t>& I, const size_t cntr, void* data);
+
+//size_t sph_cnt_realizations(sph_Data* data);
 
 
 #pragma warning(pop)

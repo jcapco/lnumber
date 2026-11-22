@@ -2,6 +2,7 @@
 #pragma warning(disable: 4018 4244 4267) //unsigned int comparisons
 
 #include <laman_number.h>
+#include <omp.h>
 
 using namespace std;
 
