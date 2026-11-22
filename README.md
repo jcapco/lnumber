@@ -142,9 +142,21 @@ A Python package that calls the `lnumber` library is available. Users can instal
 pip install lnumber
 ```
 
-For Windows users `pip` will get the prebuilt binary wheel for Python 2.x and Python 3.x. Both 32bit and 64bit Python installations are supported. Windows users will need the [Microsoft Visual C++ 2008 Redistributable Package](https://www.microsoft.com/en-us/download/details.aspx?id=26368) .
+Prebuilt wheels are available for Python 3 on the following 64-bit platforms, so `pip` installs `lnumber` without compiling anything and without any additional dependency:
 
-For Linux/macOS users `pip` will get the source and compile using `gcc`. Linux/macOS users will need the [GNU compiler collection](https://gcc.gnu.org) and the [GNU Multiple Precision Arithmetic Library](https://gmplib.org/). 
+* Linux (glibc and musl): x86_64, aarch64
+* macOS: arm64 (Apple Silicon), x86_64 (Intel)
+* Windows: AMD64, ARM64
+
+On other platforms (e.g. 32-bit systems, or Linux on ppc64le, s390x, riscv64), `pip` builds the package from source. This requires a C++11 compiler with OpenMP support; GMP is not needed. On macOS, OpenMP can be installed with Homebrew, which keeps it outside the default search paths:
+```
+brew install libomp
+CPPFLAGS="-I$(brew --prefix libomp)/include" LDFLAGS="-L$(brew --prefix libomp)/lib" pip install lnumber
+```
+
+Python 2 and 32-bit Windows are no longer supported; the last release supporting them is 0.20.
+
+**Note for macOS users:** the macOS wheels include their own copy of the OpenMP runtime (`libomp`). If another package that bundles its own `libomp` (e.g. PyTorch) is imported in the same Python process, the program may stop with `OMP: Error #15: Initializing libomp.dylib, but found libomp.dylib already initialized`. In that case, run `lnumber` in a separate process.
 
 Here is a sample Python code using the `lnumber` package
 ```

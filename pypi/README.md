@@ -1,26 +1,37 @@
-This is a python source and wheel for the lnumber module. Although this can be installed using
+The `lnumber` package computes the Laman number of a Laman graph, i.e. its number of realizations, both on the plane and on the sphere.
 
-`pip install lnumber`
+```
+pip install lnumber
+```
 
-In Linux or MacOS:
+Prebuilt wheels are available for Python 3 on the following 64-bit platforms, so `pip` installs `lnumber` without compiling anything and without any additional dependency:
 
-`pip` will install by compiling from source.
-For best performance, the .so file is compiled:
+* Linux (glibc and musl): x86_64, aarch64
+* macOS: arm64 (Apple Silicon), x86_64 (Intel)
+* Windows: AMD64, ARM64
 
-`gcc -c ../src/laman_number.cpp -I../inc -I../ -std=c++11 -O3 -s -DNDEBUG -flto -fopenmp -fpic -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -fpic -o ../laman_number.o`
+On other platforms (e.g. 32-bit systems, or Linux on ppc64le, s390x, riscv64), `pip` builds the package from source. This requires a C++11 compiler with OpenMP support; GMP is not needed. On macOS, OpenMP can be installed with Homebrew, which keeps it outside the default search paths:
+```
+brew install libomp
+CPPFLAGS="-I$(brew --prefix libomp)/include" LDFLAGS="-L$(brew --prefix libomp)/lib" pip install lnumber
+```
 
-`gcc -c ../src/lib.cpp -I../inc -I../ -std=c++11 -O3 -s -DNDEBUG -flto -fopenmp -fpic -m64 -Wall -Wextra -Wno-unknown-pragmas -Wno-sign-compare -fpic -o ../lib.o`
+Python 2 and 32-bit Windows are no longer supported; the last release supporting them is 0.20.
 
-`gcc -shared -lstdc++ -lm -lgmp -lgmpxx -lgomp -o ./lnumber.so ../laman_number.o ../lib.o`
+**Note for macOS users:** the macOS wheels include their own copy of the OpenMP runtime (`libomp`). If another package that bundles its own `libomp` (e.g. PyTorch) is imported in the same Python process, the program may stop with `OMP: Error #15: Initializing libomp.dylib, but found libomp.dylib already initialized`. In that case, run `lnumber` in a separate process.
 
-and renaming the `__init\__.py` as `lnumber.py` and placing this and the generated .so files into a searchable python path (e.g. `site-packages` or a path in `PYTHONPATH`) 
+Example: a graph is encoded as an integer whose bits are the upper triangle (without diagonal) of its adjacency matrix, read row by row.
+```
+from lnumber import *
 
-In Windows:
-`pip` can only install using the binary distribution.
-This installation requires Microsoft Visual C++ 2008 Redistributable. If you cannot run in windows due to missing dll, please install the MSVC 2008 redistributable.
+# 808 number of planar realizations of the graph 1813573113164
+lnumber(1813573113164)
+
+# 1280 number of spherical realizations of the graph 1813573113164
+lnumbers(1813573113164)
+```
 
 More information and documentation about usage, limitations and the C++ program and compilation can be found here:
 https://github.com/jcapco/lnumber
 
 For further question please email me (Jose Capco) at jcapco-at-risc-dot-jku-dot-at
-

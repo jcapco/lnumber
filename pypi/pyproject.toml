@@ -6,6 +6,7 @@ build-backend = "setuptools.build_meta"
 name = "lnumber"
 version = "0.20"
 authors = [{ name = "Jose Capco" }]
+readme = "README.md"
 dependencies = []
 license = { file = "license.txt" }
 
