@@ -68,8 +68,10 @@ jobs:
             --platform ${{ matrix.conda_platform }} --override-channels --channel conda-forge \
             "llvm-openmp==23.1.6=${{ matrix.omp_build }}"
           ls -l "$HOME/omp/lib"
-          cp "$RUNNER_TEMP/mamba/pkgs/llvm-openmp-23.1.6-${{ matrix.omp_build }}/info/licenses/openmp/LICENSE.TXT" \
-            "$HOME/omp/LICENSE-libomp.txt"
+          # the package cache layout depends on the micromamba version: read its location
+          # from the environment's metadata instead of assuming it
+          pkg_dir=$(python3 -c "import glob, json, os; print(json.load(open(glob.glob(os.path.expanduser('~/omp/conda-meta/llvm-openmp-*.json'))[0]))['extracted_package_dir'])")
+          cp "$pkg_dir/info/licenses/openmp/LICENSE.TXT" "$HOME/omp/LICENSE-libomp.txt"
 
       - name: Build and test wheels
         uses: pypa/cibuildwheel@v4.3.5
